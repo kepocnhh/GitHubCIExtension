@@ -5,23 +5,19 @@ echo "Workflow pull request unstable assemble project artifact..."
 REQUIRE_FILLED_STRING="select((.!=null)and(type==\"string\")and(.!=\"\"))"
 
 REPOSITORY=repository
-[[ -d "$REPOSITORY" ]] || exit 1 # todo
+. ex/util/assert -d $REPOSITORY
 
-VERSION_NAME="$(jq -Mcer ".version.name|$REQUIRE_FILLED_STRING" assemble/project/common.json)" || exit 1 # todo
-for it in REPOSITORY_NAME; do
- if test -z "${!it}"; then echo "$it is empty!"; exit 11; fi; done
+VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json ".version.name") \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+
+. ex/util/require REPOSITORY_NAME
 
 ARTIFACT="${REPOSITORY_NAME}-${VERSION_NAME}-UNSTABLE.jar"
 
-CODE=0
-gradle -p "$REPOSITORY" lib:assembleUnstableJar; CODE=$?
-if test $CODE -ne 0; then
- echo "Assemble \"$ARTIFACT\" error $CODE!"; exit 12
-fi
+gradle -p "$REPOSITORY" lib:assembleUnstableJar \
+ || . ex/util/throw 12 "Assemble \"$ARTIFACT\" error $CODE!"
 
-if [[ ! -f $REPOSITORY/lib/build/libs/$ARTIFACT ]]; then
- echo "The file \"$REPOSITORY/lib/build/libs/$ARTIFACT\" does not exists!"; exit 13
-fi
+. ex/util/assert -f $REPOSITORY/lib/build/libs/$ARTIFACT
 
 rm assemble/project/artifact/$ARTIFACT
 mkdir -p assemble/project/artifact

@@ -2,28 +2,23 @@
 
 echo "VCS pull request commit..."
 
-REQUIRE_FILLED_STRING="select((.!=null)and(type==\"string\")and(.!=\"\"))"
+WORKER_NAME=$(ex/util/jqx -sfs assemble/vcs/worker.json .name) \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+WORKER_VCS_EMAIL=$(ex/util/jqx -sfs assemble/vcs/worker.json .vcs_email) \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 
-WORKER_NAME="$(jq -Mcer ".name|$REQUIRE_FILLED_STRING" assemble/vcs/worker.json)"
-WORKER_VCS_EMAIL="$(jq -Mcer ".vcs_email|$REQUIRE_FILLED_STRING" assemble/vcs/worker.json)"
+GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json ".head.sha") \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+GIT_COMMIT_DST=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json ".base.sha") \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 
-for it in WORKER_NAME WORKER_VCS_EMAIL PR_NUMBER; do
- if test -z "${!it}"; then echo "$it is empty!"; exit 11; fi; done
-
-GIT_COMMIT_SRC="$(jq -Mcer ".head.sha|$REQUIRE_FILLED_STRING" assemble/vcs/pr${PR_NUMBER}.json)"
-GIT_COMMIT_DST="$(jq -Mcer ".base.sha|$REQUIRE_FILLED_STRING" assemble/vcs/pr${PR_NUMBER}.json)"
-
-for it in GIT_COMMIT_SRC GIT_COMMIT_DST GITHUB_RUN_NUMBER; do
- if test -z "${!it}"; then echo "$it is empty!"; exit 12; fi; done
+. ex/util/require PR_NUMBER GITHUB_RUN_NUMBER
 
 REPOSITORY=repository
-[[ -d "$REPOSITORY" ]] || exit 1 # todo
+. ex/util/assert -d $REPOSITORY
 
-CODE=0
 MESSAGE="Merge ${GIT_COMMIT_SRC::7} -> ${GIT_COMMIT_DST::7} by CI build #${GITHUB_RUN_NUMBER}."
-git -C $REPOSITORY commit -m "$MESSAGE"; CODE=$?
-if test $CODE -ne 0; then
- echo "Git commit failed!"; exit 41
-fi
+git -C $REPOSITORY commit -m "$MESSAGE" \
+ || . ex/util/throw 41 "Git commit error!"
 
 exit 0

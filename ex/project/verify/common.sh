@@ -10,7 +10,8 @@ ARRAY=($(jq -Mcer "keys|.[]" $ENVIRONMENT))
 SIZE=${#ARRAY[*]}
 for ((i=0; i<SIZE; i++)); do
  TYPE="${ARRAY[i]}"
- TASK="$(jq -Mcer ".${TYPE}.task" $ENVIRONMENT)" || exit 1 # todo
+ TASK=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.task") \
+  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
  gradle -p repository "$TASK" \
   || . ex/util/throw $((100+i)) "Gradle $TASK error!"
 done

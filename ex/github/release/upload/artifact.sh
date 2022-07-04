@@ -12,7 +12,8 @@ REQUIRE_INT="select((.!=null)and(type==\"number\"))"
 SELECT_FILLED_ARRAY="select((type==\"array\")and(.!=[]))"
 REQUIRE_FILLED_STRING="select((.!=null)and(type==\"string\")and(.!=\"\"))"
 
-RELEASE_ID="$(jq -Mcer ".id|$REQUIRE_INT" assemble/github/release.json)" || exit 1 # todo
+RELEASE_ID=$(ex/util/jqx -si assemble/github/release.json .id) \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 URL="https://uploads.github.com/repos/$REPOSITORY_OWNER/$REPOSITORY_NAME/releases/$RELEASE_ID/assets"
 
 SIZE=$(echo "$ARTIFACTS" | jq -Mcer "$SELECT_FILLED_ARRAY|length") || exit 1 # todo
