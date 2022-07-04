@@ -16,7 +16,7 @@ for it in OPTION JSON_FILE JSON_QUERY; do
 case "$OPTION" in
  -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;
  -sb) JSON_OPTION="select((.!=null)and(type==\"boolean\"))"
-  RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE)"; CODE=$?
+  RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; CODE=$?
   if test $CODE -eq 0; then
    if test "$RESULT" == "true"; then
     echo "$RESULT"; exit 0
@@ -33,9 +33,9 @@ case "$OPTION" in
  *) echo "Option \"$OPTION\" is not supported!" > $OUTPUT; exit 13;;
 esac
 
-RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE)"; CODE=$?
+RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; CODE=$?
 if test $CODE -ne 0; then
- echo "Json parse boolean error!" > $OUTPUT; exit 14
+ echo "Json parse by option \"$OPTION\" error!" > $OUTPUT; exit 14
 fi
 
 echo "$RESULT"
