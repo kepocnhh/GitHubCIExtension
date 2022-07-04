@@ -18,14 +18,14 @@ case "$OPTION" in
  -f)
   . ex/util/args/require $# 2
   FILE_PATH="$2"
-  . ex/util/require $FILE_PATH
+  . ex/util/require FILE_PATH
   if [ ! -f "$FILE_PATH" ]; then
    echo "File $FILE_PATH does not exist!"; exit 21
   fi;;
  -d)
   . ex/util/args/require $# 2
   DIR_PATH="$2"
-  . ex/util/require $DIR_PATH
+  . ex/util/require DIR_PATH
   if [ ! -d "$DIR_PATH" ]; then
    echo "Dir $DIR_PATH does not exist!"; exit 21
   fi;;
