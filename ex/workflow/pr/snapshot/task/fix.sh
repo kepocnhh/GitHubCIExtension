@@ -26,7 +26,7 @@ LABEL_ID=$LABEL_ID_STAGING
 IS_READY_FOR_TEST="$(jq ".labels|any(.id==$LABEL_ID)" assemble/github/issue${ISSUE_NUMBER}.json)"
 LABEL_NAME="$(echo "$(jq ".[]|select(.id==$LABEL_ID)" assemble/github/labels.json)" | jq -r .name)"
 if test "$IS_READY_FOR_TEST" == "false"; then
- echo "The issue #$ISSUE_NUMBER is already marked as \"$LABEL_NAME\"."
+ echo "The issue #$ISSUE_NUMBER is not marked as \"$LABEL_NAME\"."
  exit 0
 elif test "$IS_READY_FOR_TEST" != "true"; then
  echo "The issue #$ISSUE_NUMBER label \"$LABEL_NAME\" error!"; exit 2
