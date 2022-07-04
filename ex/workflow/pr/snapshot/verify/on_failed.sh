@@ -61,6 +61,7 @@ The pull request [#$PR_NUMBER]($REPOSITORY_URL/pull/$PR_NUMBER)
 $VERIFY_RESULT
  - closed by [$WORKER_NAME]($WORKER_HTML_URL)"
 
-/bin/bash repository/buildSrc/src/main/resources/bash/notification/telegram/send_message.sh "$MESSAGE" || exit 31
+ex/notification/telegram/send_message.sh "$MESSAGE" \
+ || . ex/util/throw 31 "Notification unexpected error!"
 
 exit 0

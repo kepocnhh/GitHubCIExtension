@@ -19,6 +19,7 @@ MESSAGE="CI build [#$GITHUB_RUN_NUMBER]($REPOSITORY_URL/actions/runs/$GITHUB_RUN
 
 The commit [${GIT_COMMIT_SHA::7}]($REPOSITORY_URL/commit/$GIT_COMMIT_SHA) by [$AUTHOR_NAME]($AUTHOR_HTML_URL) is verified %F0%9F%91%8D"
 
-/bin/bash repository/buildSrc/src/main/resources/bash/notification/telegram/send_message.sh "$MESSAGE" || exit 11
+ex/notification/telegram/send_message.sh "$MESSAGE" \
+ || . ex/util/throw 11 "Notification unexpected error!"
 
 exit 0
