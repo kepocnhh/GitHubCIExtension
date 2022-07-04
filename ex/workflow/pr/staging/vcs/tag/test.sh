@@ -7,9 +7,9 @@ VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
 TAG="${VERSION_NAME}-STAGING"
 
 CODE=0
-/bin/bash ex/vcs/tag/test.sh "$TAG"; CODE=$?
+ex/vcs/tag/test.sh "$TAG"; CODE=$?
 if test $CODE -ne 0; then
- /bin/bash ex/workflow/pr/staging/vcs/tag/test/on_failed.sh; exit 11
+ ex/workflow/pr/staging/vcs/tag/test/on_failed.sh; exit 11
 fi
 
 exit 0

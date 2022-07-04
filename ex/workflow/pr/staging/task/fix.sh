@@ -9,7 +9,7 @@ MESSAGE="$2"
 
 . ex/util/require ISSUE_NUMBER MESSAGE LABEL_ID_STAGING LABEL_ID_SNAPSHOT
 
-/bin/bash ex/github/issue.sh "$ISSUE_NUMBER" || exit 1 # todo
+ex/github/issue.sh "$ISSUE_NUMBER" || exit 1 # todo
 
 LABEL_ID=$LABEL_ID_STAGING
 IS_READY_FOR_TEST="$(jq ".labels|any(.id==$LABEL_ID)" assemble/github/issue${ISSUE_NUMBER}.json)"
@@ -39,9 +39,9 @@ elif test "$ISSUE_STATE" != "open"; then
  echo "The issue #$ISSUE_NUMBER state error!"; exit 2
 fi
 
-/bin/bash ex/github/issue/comment.sh "$ISSUE_NUMBER" "$MESSAGE" || exit 1 # todo
+ex/github/issue/comment.sh "$ISSUE_NUMBER" "$MESSAGE" || exit 1 # todo
 echo "$(jq ".+[$(cat assemble/github/issue${ISSUE_NUMBER}.json)]" assemble/github/fixed.json)" \
  > assemble/github/fixed.json || exit 1 # todo
-/bin/bash ex/workflow/pr/task/patch.sh "$ISSUE_NUMBER" "$LABEL_ID_STAGING" || exit 1 # todo
+ex/workflow/pr/task/patch.sh "$ISSUE_NUMBER" "$LABEL_ID_STAGING" || exit 1 # todo
 
 exit 0

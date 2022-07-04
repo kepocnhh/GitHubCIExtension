@@ -37,7 +37,7 @@ REPOSITORY_URL=https://github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME
 MESSAGE="Merged by CI build [#$GITHUB_RUN_NUMBER]($REPOSITORY_URL/actions/runs/$GITHUB_RUN_ID)
  - release [$TAG]($REPOSITORY_URL/releases/tag/$TAG)"
 
-/bin/bash ex/vcs/pr/comment.sh "$MESSAGE" || exit 31 # todo
+ex/vcs/pr/comment.sh "$MESSAGE" || exit 31 # todo
 
 MESSAGE="CI build [#$GITHUB_RUN_NUMBER]($REPOSITORY_URL/actions/runs/$GITHUB_RUN_ID)
 
@@ -51,6 +51,6 @@ MESSAGE="CI build [#$GITHUB_RUN_NUMBER]($REPOSITORY_URL/actions/runs/$GITHUB_RUN
 The pull request [#$PR_NUMBER]($REPOSITORY_URL/pull/$PR_NUMBER) merged by [$WORKER_NAME]($WORKER_HTML_URL)
  - release [$TAG]($REPOSITORY_URL/releases/tag/$TAG)"
 
-/bin/bash ex/notification/telegram/send_message.sh "$MESSAGE" || exit 32
+ex/notification/telegram/send_message.sh "$MESSAGE" || exit 32
 
 exit 0

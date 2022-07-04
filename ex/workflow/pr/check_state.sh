@@ -9,7 +9,7 @@ EXPECTED_STATE="$1"
 . ex/util/require PR_NUMBER EXPECTED_STATE
 
 for (( i=0; i<10; i++ )); do
- /bin/bash ex/vcs/pr/check_state.sh "$EXPECTED_STATE" && exit 0
+ ex/vcs/pr/check_state.sh "$EXPECTED_STATE" && exit 0
  echo "check failed for the $i time..."
  sleep 1
 done

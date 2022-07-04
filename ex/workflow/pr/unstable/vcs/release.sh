@@ -18,13 +18,13 @@ BODY="$(echo "$BODY" | jq -Mc ".body=\"CI build [#$GITHUB_RUN_NUMBER]($REPOSITOR
 BODY="$(echo "$BODY" | jq -Mc ".draft=false")"
 BODY="$(echo "$BODY" | jq -Mc ".prerelease=true")"
 mkdir -p assemble/github
-/bin/bash ex/github/release.sh "$BODY" || exit 16
+ex/github/release.sh "$BODY" || exit 16
 
 ARTIFACT_NAME="${REPOSITORY_NAME}-${TAG}.jar"
 ARTIFACT="$(echo "{}" | jq -Mc ".name=\"$ARTIFACT_NAME\"")"
 ARTIFACT="$(echo "$ARTIFACT" | jq -Mc ".label=\"$ARTIFACT_NAME\"")"
 ARTIFACT="$(echo "$ARTIFACT" | jq -Mc ".path=\"assemble/project/artifact/$ARTIFACT_NAME\"")"
 ARTIFACTS="$(echo "[]" | jq -Mc ".+=[$ARTIFACT]")"
-/bin/bash ex/github/release/upload/artifact.sh "$ARTIFACTS" || exit 17
+ex/github/release/upload/artifact.sh "$ARTIFACTS" || exit 17
 
 exit 0

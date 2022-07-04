@@ -2,7 +2,7 @@
 
 echo "Workflow pull request staging verify on failed start..."
 
-/bin/bash ex/vcs/pr/close.sh || exit 11 # todo
+ex/vcs/pr/close.sh || exit 11 # todo
 
 . ex/util/require REPOSITORY_OWNER REPOSITORY_NAME \
  GITHUB_RUN_NUMBER GITHUB_RUN_ID PR_NUMBER
@@ -32,7 +32,7 @@ REPOSITORY_URL=https://github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME
 MESSAGE="Closed by CI build [#$GITHUB_RUN_NUMBER]($REPOSITORY_URL/actions/runs/$GITHUB_RUN_ID)
 $VERIFY_RESULT"
 
-/bin/bash ex/vcs/pr/comment.sh "$MESSAGE" || exit 31 # todo
+ex/vcs/pr/comment.sh "$MESSAGE" || exit 31 # todo
 
 GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"

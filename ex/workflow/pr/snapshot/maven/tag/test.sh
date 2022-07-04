@@ -14,7 +14,7 @@ CODE=0
 CODE=$(curl -w %{http_code} -o /dev/null \
  "${BASE_URL}/${MAVEN_ARTIFACT_ID}/${TAG}/")
 if test $CODE -ne 404; then
- /bin/bash ex/workflow/pr/snapshot/maven/tag/test/on_failed.sh; exit 11
+ ex/workflow/pr/snapshot/maven/tag/test/on_failed.sh; exit 11
 fi
 
 exit 0

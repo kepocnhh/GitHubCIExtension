@@ -9,7 +9,7 @@ MESSAGE="$2"
 
 . ex/util/require ISSUE_NUMBER MESSAGE LABEL_ID_STAGING LABEL_ID_SNAPSHOT
 
-/bin/bash ex/github/issue.sh "$ISSUE_NUMBER" \
+ex/github/issue.sh "$ISSUE_NUMBER" \
  || . ex/util/throw 11 "Issue unexpected error!"
 
 LABEL_ID=$LABEL_ID_SNAPSHOT
@@ -40,13 +40,13 @@ elif test "$ISSUE_STATE" != "open"; then
  echo "The issue #$ISSUE_NUMBER state error!"; exit 2
 fi
 
-/bin/bash ex/github/issue/comment.sh "$ISSUE_NUMBER" "$MESSAGE" \
+ex/github/issue/comment.sh "$ISSUE_NUMBER" "$MESSAGE" \
  || . ex/util/throw 12 "Issue comment unexpected error!"
 
 echo "$(jq ".+[$(cat assemble/github/issue${ISSUE_NUMBER}.json)]" assemble/github/fixed.json)" \
  > assemble/github/fixed.json \
  || . ex/util/throw 13 "Issue fixed unexpected error!"
-/bin/bash ex/workflow/pr/task/patch.sh "$ISSUE_NUMBER" "$LABEL_ID_SNAPSHOT" \
+ex/workflow/pr/task/patch.sh "$ISSUE_NUMBER" "$LABEL_ID_SNAPSHOT" \
  || . ex/util/throw 14 "Issue patch unexpected error!"
 
 exit 0

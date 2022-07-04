@@ -2,7 +2,7 @@
 
 echo "Workflow pull request unstable VCS tag test on failed..."
 
-/bin/bash ex/vcs/pr/close.sh || exit 11 # todo
+ex/vcs/pr/close.sh || exit 11 # todo
 
 . ex/util/require REPOSITORY_OWNER REPOSITORY_NAME \
  GITHUB_RUN_NUMBER GITHUB_RUN_ID PR_NUMBER
@@ -16,7 +16,7 @@ REPOSITORY_URL=https://github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME
 MESSAGE="Closed by CI build [#$GITHUB_RUN_NUMBER]($REPOSITORY_URL/actions/runs/$GITHUB_RUN_ID)
  - tag \`$TAG\` test  failed!"
 
-/bin/bash ex/vcs/pr/comment.sh "$MESSAGE" || exit 31 # todo
+ex/vcs/pr/comment.sh "$MESSAGE" || exit 31 # todo
 
 GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
@@ -45,6 +45,6 @@ The pull request [#$PR_NUMBER]($REPOSITORY_URL/pull/$PR_NUMBER)
  - tag \`$TAG\` test failed!
  - closed by [$WORKER_NAME]($WORKER_HTML_URL)"
 
-/bin/bash ex/notification/telegram/send_message.sh "$MESSAGE" || exit 32
+ex/notification/telegram/send_message.sh "$MESSAGE" || exit 32
 
 exit 0
