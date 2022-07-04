@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if test $# -ne 2; then
+ echo "Unexpected argument number!"; exit 91
+fi
+
+ACTUAL_NUMBER=$1
+EXPECTED_NUMBER=$2
+
+if [[ "$ACTUAL_NUMBER" =~ [1-9][0-9]* ]]; then
+ if [[ "$EXPECTED_NUMBER" =~ [1-9][0-9]* ]]; then
+  /bin/true
+ else
+  echo "Expected value is not a number!"; exit 92
+ fi
+else
+ echo "Actual value is not a number!"; exit 92
+fi
+
+if test $ACTUAL_NUMBER -ne $EXPECTED_NUMBER; then
+ echo "Script needs for $EXPECTED_NUMBER argument but actual $ACTUAL_NUMBER"; exit 11
+fi

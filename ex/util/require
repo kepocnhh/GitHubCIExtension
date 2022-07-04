@@ -1,0 +1,15 @@
+#!/bin/bash
+
+if test $# -eq 0; then
+ echo "Empty arguments!"; exit 11
+fi
+
+ARRAY=($@)
+SIZE=${#ARRAY[@]}
+for (( i=0; i<$SIZE; i++ )); do
+ it="${ARRAY[$i]}"
+ if test -z "${!it}"; then
+  echo "$it is empty!"
+  exit $((100+i))
+ fi
+done

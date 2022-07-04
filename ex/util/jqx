@@ -1,0 +1,43 @@
+#!/bin/bash
+
+OUTPUT=/tmp/jqx.o
+
+if test $# -ne 3; then
+ echo "Script needs for 3 argument but actual $#" > $OUTPUT; exit 11
+fi
+
+OPTION="$1"
+JSON_FILE="$2"
+JSON_QUERY="$3"
+
+for it in OPTION JSON_FILE JSON_QUERY; do
+ if test -z "${!it}"; then echo "$it is empty!" > $OUTPUT; exit 12; fi; done
+
+case "$OPTION" in
+ -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;
+ -sb) JSON_OPTION="select((.!=null)and(type==\"boolean\"))"
+  RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE)"; CODE=$?
+  if test $CODE -eq 0; then
+   if test "$RESULT" == "true"; then
+    echo "$RESULT"; exit 0
+   fi
+   echo "Unexpected boolean value \"$RESULT\"!"; exit 121
+  elif test $CODE -eq 1; then
+   if test "$RESULT" == "false"; then
+    echo "$RESULT"; exit 0
+   fi
+   echo "Unexpected boolean value \"$RESULT\"!"; exit 122
+  fi
+  echo "Json parse boolean error!"; exit 123;;
+ -si) JSON_OPTION="select((.!=null)and(type==\"number\"))";;
+ *) echo "Option \"$OPTION\" is not supported!" > $OUTPUT; exit 13;;
+esac
+
+RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE)"; CODE=$?
+if test $CODE -ne 0; then
+ echo "Json parse boolean error!" > $OUTPUT; exit 14
+fi
+
+echo "$RESULT"
+
+exit 0
