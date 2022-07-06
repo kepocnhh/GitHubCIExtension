@@ -2,16 +2,14 @@
 
 OUTPUT=/tmp/jqx.o
 
-if test $# -ne 3; then
- echo "Script needs for 3 argument but actual $#" > $OUTPUT; exit 11
-fi
+. ex/util/args/require $# 3
 
 OPTION="$1"
 JSON_FILE="$2"
 JSON_QUERY="$3"
 
-for it in OPTION JSON_FILE JSON_QUERY; do
- if test -z "${!it}"; then echo "$it is empty!" > $OUTPUT; exit 12; fi; done
+. ex/util/require OPTION JSON_FILE JSON_QUERY
+. ex/util/assert -f $JSON_FILE
 
 case "$OPTION" in
  -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;

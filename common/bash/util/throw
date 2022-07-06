@@ -5,8 +5,7 @@
 CODE=$1
 MESSAGE="$2"
 
-for it in CODE MESSAGE; do
- if test -z "${!it}"; then echo "$it is empty!"; exit 12; fi; done
+. ex/util/require CODE MESSAGE
 
 echo "$MESSAGE"
 
