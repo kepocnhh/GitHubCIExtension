@@ -3,7 +3,7 @@
 echo "Project verify..."
 
 CODE=0
-ENVIRONMENT=repository/buildSrc/src/main/resources/json/unit_test.json
+ENVIRONMENT=repository/buildSrc/src/main/resources/json/verify/unit_test.json
 TYPE="UNIT_TEST"
 TASK=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.task") \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
