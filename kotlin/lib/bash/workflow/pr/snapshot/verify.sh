@@ -8,13 +8,15 @@ ex/project/verify/pre.sh \
 CODE=0
 
 JSON_PATH=repository/buildSrc/src/main/resources/json
-ex/project/verify/common.sh "$JSON_PATH/verify.json" \
+ex/project/verify/common.sh "$JSON_PATH/verify/common.json" \
+ && ex/project/verify/common.sh "$JSON_PATH/verify/info.json" \
  && ex/project/verify/common.sh "$JSON_PATH/verify/documentation.json" \
  && ex/project/verify/unit_test.sh; CODE=$?
 if test $CODE -ne 0; then
  mkdir -p diagnostics
  echo "{}" > diagnostics/summary.json
- ex/project/diagnostics/common.sh "$JSON_PATH/verify.json" \
+ ex/project/diagnostics/common.sh "$JSON_PATH/verify/common.json" \
+  && ex/project/diagnostics/common.sh "$JSON_PATH/verify/info.json" \
   && ex/project/diagnostics/common.sh "$JSON_PATH/verify/documentation.json" \
   && ex/project/diagnostics/unit_test.sh \
   && ex/vcs/diagnostics/report.sh \
