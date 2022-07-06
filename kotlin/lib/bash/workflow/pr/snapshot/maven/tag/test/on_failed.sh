@@ -7,9 +7,7 @@ ex/vcs/pr/close.sh || exit 11 # todo
 . ex/util/require REPOSITORY_OWNER REPOSITORY_NAME \
  GITHUB_RUN_NUMBER GITHUB_RUN_ID PR_NUMBER
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-TAG="${VERSION_NAME}-SNAPSHOT"
+. ex/workflow/pr/snapshot/tag.sh
 
 REPOSITORY_URL=https://github.com/$REPOSITORY_OWNER/$REPOSITORY_NAME
 

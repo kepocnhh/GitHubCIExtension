@@ -25,9 +25,7 @@ for ((i=0; i<SIZE; i++)); do
  ISSUES+=($(echo "$it" | grep -Po "$REGEX" | grep -Po "\d+"))
 done
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-TAG="${VERSION_NAME}-SNAPSHOT"
+. ex/workflow/pr/snapshot/tag.sh
 
 ex/github/labels.sh || exit 32
 SIZE=${#ISSUES[*]}

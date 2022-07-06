@@ -6,9 +6,7 @@ echo "Workflow pull request snapshot maven release..."
 
 MAVEN_URL="https://s01.oss.sonatype.org/content/repositories/snapshots"
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-TAG="${VERSION_NAME}-SNAPSHOT"
+. ex/workflow/pr/snapshot/tag.sh
 
 BASE_URL="${MAVEN_URL}/${MAVEN_GROUP_ID//.//}/${MAVEN_ARTIFACT_ID}/${TAG}"
 

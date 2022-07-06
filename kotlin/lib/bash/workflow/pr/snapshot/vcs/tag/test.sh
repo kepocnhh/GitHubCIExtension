@@ -2,9 +2,7 @@
 
 echo "Workflow pull request snapshot VCS tag test..."
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-TAG="${VERSION_NAME}-SNAPSHOT"
+. ex/workflow/pr/snapshot/tag.sh
 
 CODE=0
 ex/vcs/tag/test.sh "$TAG"; CODE=$?

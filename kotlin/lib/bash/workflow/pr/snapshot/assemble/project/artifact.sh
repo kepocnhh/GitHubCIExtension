@@ -7,9 +7,7 @@ echo "Workflow pull request snapshot assemble project artifact..."
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-TAG="${VERSION_NAME}-SNAPSHOT"
+. ex/workflow/pr/snapshot/tag.sh
 
 rm -rf assemble/project/artifact
 mkdir -p assemble/project/artifact
