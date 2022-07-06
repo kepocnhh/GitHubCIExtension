@@ -4,9 +4,7 @@ echo "Workflow pull request unstable VCS release..."
 
 . ex/util/require REPOSITORY_OWNER REPOSITORY_NAME GITHUB_RUN_NUMBER GITHUB_RUN_ID
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json .version.name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-TAG="${VERSION_NAME}-UNSTABLE"
+. ex/workflow/pr/unstable/tag.sh
 
 GIT_COMMIT_SHA=$(ex/util/jqx -sfs assemble/vcs/commit.json .sha) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"

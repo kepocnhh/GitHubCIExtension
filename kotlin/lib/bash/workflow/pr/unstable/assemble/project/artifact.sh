@@ -2,17 +2,14 @@
 
 echo "Workflow pull request unstable assemble project artifact..."
 
-REQUIRE_FILLED_STRING="select((.!=null)and(type==\"string\")and(.!=\"\"))"
-
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
 
-VERSION_NAME=$(ex/util/jqx -sfs assemble/project/common.json ".version.name") \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/workflow/pr/unstable/tag.sh
 
-. ex/util/require REPOSITORY_NAME
+. ex/util/require REPOSITORY_NAME TAG
 
-ARTIFACT="${REPOSITORY_NAME}-${VERSION_NAME}-UNSTABLE.jar"
+ARTIFACT="${REPOSITORY_NAME}-${TAG}.jar"
 
 gradle -p "$REPOSITORY" lib:assembleUnstableJar \
  || . ex/util/throw 12 "Assemble \"$ARTIFACT\" error $CODE!"
