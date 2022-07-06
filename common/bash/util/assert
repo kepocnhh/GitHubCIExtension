@@ -4,9 +4,9 @@ if test $# -eq 0; then
  echo "Empty arguments!"; exit 11
 fi
 
-OPTION="$1"
+ASSERT_OPTION="$1"
 
-case "$OPTION" in
+case "$ASSERT_OPTION" in
  -eq)
   . ex/util/args/require $# 3
   EXPECTED="$2"
@@ -29,5 +29,5 @@ case "$OPTION" in
   if [ ! -d "$DIR_PATH" ]; then
    echo "Dir $DIR_PATH does not exist!"; exit 21
   fi;;
- *) echo "Option \"$OPTION\" is not supported!"; exit 91;;
+ *) echo "Assert | Option \"$ASSERT_OPTION\" is not supported!"; exit 91;;
 esac

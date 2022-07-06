@@ -2,16 +2,16 @@
 
 OUTPUT=/tmp/jqx.o
 
-. ex/util/args/require $# 3
+. ex/util/args/require $# 3 > $OUTPUT
 
-OPTION="$1"
+JQX_OPTION="$1"
 JSON_FILE="$2"
 JSON_QUERY="$3"
 
-. ex/util/require OPTION JSON_FILE JSON_QUERY
-. ex/util/assert -f $JSON_FILE
+. ex/util/require JQX_OPTION JSON_FILE JSON_QUERY > $OUTPUT
+. ex/util/assert -f $JSON_FILE > $OUTPUT
 
-case "$OPTION" in
+case "$JQX_OPTION" in
  -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;
  -sb) JSON_OPTION="select((.!=null)and(type==\"boolean\"))"
   RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; CODE=$?
@@ -19,21 +19,21 @@ case "$OPTION" in
    if test "$RESULT" == "true"; then
     echo "$RESULT"; exit 0
    fi
-   echo "Unexpected boolean value \"$RESULT\"!"; exit 121
+   . ex/util/throw 121 "Unexpected boolean value \"$RESULT\"!" > $OUTPUT
   elif test $CODE -eq 1; then
    if test "$RESULT" == "false"; then
     echo "$RESULT"; exit 0
    fi
-   echo "Unexpected boolean value \"$RESULT\"!"; exit 122
+   . ex/util/throw 122 "Unexpected boolean value \"$RESULT\"!" > $OUTPUT
   fi
   echo "Json parse boolean error!"; exit 123;;
  -si) JSON_OPTION="select((.!=null)and(type==\"number\"))";;
- *) echo "Option \"$OPTION\" is not supported!" > $OUTPUT; exit 13;;
+ *) . ex/util/throw 13 "JQ | Option \"$JQX_OPTION\" is not supported!" > $OUTPUT;;
 esac
 
 RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; CODE=$?
 if test $CODE -ne 0; then
- echo "Json parse by option \"$OPTION\" error!" > $OUTPUT; exit 14
+ . ex/util/throw 14 "Json parse by option \"$JQX_OPTION\" error!" > $OUTPUT
 fi
 
 echo "$RESULT"
