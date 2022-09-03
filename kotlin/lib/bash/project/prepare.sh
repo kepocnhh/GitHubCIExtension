@@ -2,17 +2,17 @@
 
 echo "Project prepare..."
 
-. ex/util/require KEYSTORE KEYSTORE_PASSWORD KEYSTORE_FINGERPRINT
+. ex/util/require KEYSTORE KEYSTORE_PASSWORD KEYSTORE_FINGERPRINT KEY_ALIAS
 
-echo "$KEYSTORE" | base64 -d > assemble/project/key.pkcs12 \
+echo "$KEYSTORE" | base64 -d > assemble/project/${KEY_ALIAS}.pkcs12 \
  || . ex/util/throw 11 "Keystore error!"
 
-ACTUAL_FINGERPRINT="$(openssl pkcs12 -in assemble/project/key.pkcs12 -nokeys -passin pass:"$KEYSTORE_PASSWORD" \
+ACTUAL_FINGERPRINT="$(keytool -keystore assemble/project/${KEY_ALIAS}.pkcs12 -storepass "$KEYSTORE_PASSWORD" \
+ -exportcert -rfc -alias ${KEY_ALIAS} \
  | openssl x509 -noout -fingerprint -sha512)" \
  || . ex/util/throw 12 "Actual fingerprint error!"
 
-EXPECTED_FINGERPRINT="SHA512 Fingerprint=$KEYSTORE_FINGERPRINT"
-. ex/util/assert -eq EXPECTED_FINGERPRINT ACTUAL_FINGERPRINT
+. ex/util/assert -eqv "SHA512 Fingerprint=$KEYSTORE_FINGERPRINT" "$ACTUAL_FINGERPRINT"
 
 gradle -p repository clean \
  || . ex/util/throw 21 "Gradle clean error!"

@@ -13,21 +13,34 @@ case "$ASSERT_OPTION" in
   ACTUAL="$3"
   . ex/util/require $EXPECTED $ACTUAL
   if test "${!EXPECTED}" != "${!ACTUAL}"; then
-   echo "Actual is \"${!ACTUAL}\", but expected is \"${!EXPECTED}\"!"; exit 23
+   echo "Actual is \"${!ACTUAL}\", but expected is \"${!EXPECTED}\"!"; exit 21
+  fi;;
+ -eqv)
+  . ex/util/args/require $# 3
+  EXPECTED="$2"
+  if test -z "$EXPECTED"; then
+   echo "Expected is empty!"; exit 121
+  fi
+  ACTUAL="$3"
+  if test -z "$ACTUAL"; then
+   echo "Actual is empty!"; exit 122
+  fi
+  if test "$EXPECTED" != "$ACTUAL"; then
+   echo "Actual is \"$ACTUAL\", but expected is \"$EXPECTED\"!"; exit 22
   fi;;
  -f)
   . ex/util/args/require $# 2
   FILE_PATH="$2"
   . ex/util/require FILE_PATH
   if [ ! -f "$FILE_PATH" ]; then
-   echo "File $FILE_PATH does not exist!"; exit 21
+   echo "File $FILE_PATH does not exist!"; exit 23
   fi;;
  -d)
   . ex/util/args/require $# 2
   DIR_PATH="$2"
   . ex/util/require DIR_PATH
   if [ ! -d "$DIR_PATH" ]; then
-   echo "Dir $DIR_PATH does not exist!"; exit 21
+   echo "Dir $DIR_PATH does not exist!"; exit 24
   fi;;
  *) echo "Assert | Option \"$ASSERT_OPTION\" is not supported!"; exit 91;;
 esac
