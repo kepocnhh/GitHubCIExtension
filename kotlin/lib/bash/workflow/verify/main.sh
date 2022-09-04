@@ -24,7 +24,7 @@ ex/project/verify/common.sh "$JSON_PATH/verify/common.json" \
 if test $CODE -ne 0; then
  mkdir -p diagnostics
  echo "{}" > diagnostics/summary.json
- ex/project/diagnostics/common.sh "$JSON_PATH/verify.json" \
+ ex/project/diagnostics/common.sh "$JSON_PATH/verify/common.json" \
   && ex/project/diagnostics/unit_test.sh \
   && ex/vcs/diagnostics/report.sh \
   || . ex/util/throw 41 "Diagnostics unexpected error!"
@@ -37,5 +37,3 @@ ex/workflow/verify/on_success.sh \
  || . ex/util/throw 51 "On success unexpected error!"
 
 echo "Workflow verify finish."
-
-exit 0
