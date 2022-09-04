@@ -2,9 +2,9 @@
 
 echo "Workflow pull request unstable VCS release..."
 
-. ex/util/require REPOSITORY_OWNER REPOSITORY_NAME GITHUB_RUN_NUMBER GITHUB_RUN_ID
-
 . ex/workflow/pr/unstable/tag.sh
+
+. ex/util/require REPOSITORY_OWNER REPOSITORY_NAME GITHUB_RUN_NUMBER GITHUB_RUN_ID TAG
 
 GIT_COMMIT_SHA=$(ex/util/jqx -sfs assemble/vcs/commit.json .sha) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
@@ -16,13 +16,18 @@ BODY="$(echo "$BODY" | jq -Mc ".body=\"CI build [#$GITHUB_RUN_NUMBER]($REPOSITOR
 BODY="$(echo "$BODY" | jq -Mc ".draft=false")"
 BODY="$(echo "$BODY" | jq -Mc ".prerelease=true")"
 mkdir -p assemble/github
-ex/github/release.sh "$BODY" || exit 16
+ex/github/release.sh "$BODY" || exit 11
 
-ARTIFACT_NAME="${REPOSITORY_NAME}-${TAG}.jar"
-ARTIFACT="$(echo "{}" | jq -Mc ".name=\"$ARTIFACT_NAME\"")"
-ARTIFACT="$(echo "$ARTIFACT" | jq -Mc ".label=\"$ARTIFACT_NAME\"")"
-ARTIFACT="$(echo "$ARTIFACT" | jq -Mc ".path=\"assemble/project/artifact/$ARTIFACT_NAME\"")"
-ARTIFACTS="$(echo "[]" | jq -Mc ".+=[$ARTIFACT]")"
-ex/github/release/upload/artifact.sh "$ARTIFACTS" || exit 17
+ex/project/sign/artifact/verify.sh "$TAG" || exit 21
 
-exit 0
+ARTIFACTS="[]"
+for it in \
+ "${REPOSITORY_NAME}-${TAG}.jar" \
+ "${REPOSITORY_NAME}-${TAG}.jar.sig"; do
+ ARTIFACT="$(echo "{}" | jq -Mc ".name=\"$it\"")"
+ ARTIFACT="$(echo "$ARTIFACT" | jq -Mc ".label=\"$it\"")"
+ ARTIFACT="$(echo "$ARTIFACT" | jq -Mc ".path=\"assemble/project/artifact/$it\"")"
+ ARTIFACTS="$(echo "$ARTIFACTS" | jq -Mc ".+=[$ARTIFACT]")"
+done
+
+ex/github/release/upload/artifact.sh "$ARTIFACTS" || exit 31

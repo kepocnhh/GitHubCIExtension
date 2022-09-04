@@ -20,3 +20,5 @@ rm assemble/project/artifact/$ARTIFACT
 mkdir -p assemble/project/artifact
 mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT \
  || . ex/util/throw 12 "Install \"$ARTIFACT\" error!"
+
+ex/project/sign/artifact.sh "$TAG" || exit 13
