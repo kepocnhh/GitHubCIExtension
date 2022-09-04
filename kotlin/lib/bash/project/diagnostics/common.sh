@@ -5,9 +5,10 @@ echo "Project diagnostics..."
 [ $# -eq 0 ] && . ex/util/throw 11 "Script needs more arguments!"
 
 CODE=0
-for (( j=1; j<=$#; j++ )); do
- ENVIRONMENT="${!j}"
+for (( ARG_NUMBER=1; ARG_NUMBER<=$#; ARG_NUMBER++ )); do
+ ENVIRONMENT="${!ARG_NUMBER}"
  . ex/util/assert -f $ENVIRONMENT
+ echo "Start environment [$ARG_NUMBER/$#] ${ENVIRONMENT}..."
  ARRAY=($(jq -Mcer "keys|.[]" $ENVIRONMENT))
  for ((i=0; i<${#ARRAY[*]}; i++)); do
   TYPE="${ARRAY[i]}"
@@ -32,7 +33,7 @@ done
 
 TYPES="$(jq -Mcer "keys" diagnostics/summary.json)" || exit 1 # todo
 if test "$TYPES" == "[]"; then
- echo "Diagnostics should have determined the cause of the failure!"; exit 0
+ echo "Diagnostics should have determined the cause of the failure!"; exit 1 # todo
 fi
 
 echo "Diagnostics have determined the cause of the failure - this is: $TYPES."
