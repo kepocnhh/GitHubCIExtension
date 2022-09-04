@@ -10,8 +10,9 @@ TAG="$1"
 
 ARTIFACT="${REPOSITORY_NAME}-${TAG}.jar"
 
-. ex/util/assert -f assemble/project/artifact/$ARTIFACT
-. ex/util/assert -f assemble/project/${KEY_ALIAS}.pkcs12
+. ex/util/assert -f \
+ assemble/project/artifact/$ARTIFACT \
+ assemble/project/${KEY_ALIAS}.pkcs12
 
 echo "Sign \"$ARTIFACT\"..."
 jarsigner \
@@ -21,6 +22,11 @@ jarsigner \
  -sigalg SHA512withRSA \
  -digestalg SHA-512 \
  assemble/project/artifact/$ARTIFACT ${KEY_ALIAS} > /dev/null \
- || . ex/util/throw 11 "Sign \"$ARTIFACT\" error!"
-jarsigner -verify assemble/project/artifact/$ARTIFACT \
- || . ex/util/throw 12 "Verify \"$ARTIFACT\" error!"
+ || . ex/util/throw 11 "Sign jar \"$ARTIFACT\" error!"
+
+openssl dgst -sha512 \
+ -sign <(openssl pkcs12 -in assemble/project/${KEY_ALIAS}.pkcs12 \
+  -nocerts -passin pass:"$KEYSTORE_PASSWORD" -passout pass:"$KEYSTORE_PASSWORD") \
+ -passin pass:"$KEYSTORE_PASSWORD" \
+ -out assemble/project/artifact/${ARTIFACT}.sig assemble/project/artifact/$ARTIFACT \
+ || . ex/util/throw 12 "Sign \"$ARTIFACT\" error!"

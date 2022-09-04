@@ -29,12 +29,12 @@ case "$ASSERT_OPTION" in
    echo "Actual is \"$ACTUAL\", but expected is \"$EXPECTED\"!"; exit 22
   fi;;
  -f)
-  . ex/util/args/require $# 2
-  FILE_PATH="$2"
-  . ex/util/require FILE_PATH
-  if [ ! -f "$FILE_PATH" ]; then
-   echo "File $FILE_PATH does not exist!"; exit 23
-  fi;;
+  [ $# -eq 1 ] && . ex/util/throw 131 "Script needs more arguments!"
+  for (( i=2; i<=$#; i++ )); do
+   FILE_PATH="${!i}"
+   . ex/util/require FILE_PATH
+   [ ! -s "$FILE_PATH" ] && . ex/util/throw 132 "File \"$FILE_PATH\" does not exist!"
+  done;;
  -d)
   . ex/util/args/require $# 2
   DIR_PATH="$2"
