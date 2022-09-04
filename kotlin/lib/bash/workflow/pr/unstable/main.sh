@@ -12,7 +12,8 @@ ex/vcs/pr/merge.sh || exit 21
 
 mkdir -p assemble/project
 ex/project/prepare.sh || exit 31
-ex/assemble/project/common.sh || exit 32
+ex/project/sign/prepare.sh || exit 32
+ex/assemble/project/common.sh || exit 33
 
 ex/workflow/pr/unstable/vcs/tag/test.sh || exit 41
 ex/workflow/pr/unstable/vcs/push.sh || exit 42
@@ -22,5 +23,3 @@ ex/vcs/pr/check_state.sh "closed" || exit 44 # todo
 ex/workflow/pr/unstable/on_success.sh || exit 91
 
 echo "Workflow pull request unstable finish."
-
-exit 0
