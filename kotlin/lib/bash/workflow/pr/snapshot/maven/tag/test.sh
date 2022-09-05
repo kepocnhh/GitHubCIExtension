@@ -14,5 +14,3 @@ CODE=$(curl -w %{http_code} -o /dev/null \
 if test $CODE -ne 404; then
  ex/workflow/pr/snapshot/maven/tag/test/on_failed.sh; exit 11
 fi
-
-exit 0

@@ -8,7 +8,8 @@ ex/vcs/pr/merge.sh || exit 21
 
 mkdir -p assemble/project
 ex/project/prepare.sh || exit 31
-ex/assemble/project/common.sh || exit 32
+ex/project/sign/prepare.sh || exit 32
+ex/assemble/project/common.sh || exit 33
 
 ex/workflow/pr/snapshot/vcs/tag/test.sh || exit 81
 ex/workflow/pr/snapshot/maven/tag/test.sh || exit 82
@@ -22,5 +23,3 @@ ex/workflow/pr/check_state.sh "closed" || exit 71
 ex/workflow/pr/snapshot/on_success.sh || exit 91
 
 echo "Workflow pull request snapshot finish."
-
-exit 0

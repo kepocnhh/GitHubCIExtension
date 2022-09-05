@@ -14,20 +14,23 @@ mkdir -p assemble/project/artifact
 
 ARTIFACT="${REPOSITORY_NAME}-${TAG}.jar"
 gradle -p "$REPOSITORY" lib:assembleSnapshotJar \
- || . ex/util/throw 11 "Assemble \"$ARTIFACT\" error $?!"
+ || . ex/util/throw 111 "Assemble \"$ARTIFACT\" error!"
 . ex/util/assert -f $REPOSITORY/lib/build/libs/$ARTIFACT
-mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT || exit 1 # todo
+mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT \
+ || . ex/util/throw 112 "Install \"$ARTIFACT\" error!"
+
+ex/project/sign/artifact.sh "$TAG" || exit 113
 
 ARTIFACT="${REPOSITORY_NAME}-${TAG}-sources.jar"
 gradle -p "$REPOSITORY" lib:assembleSnapshotSource \
- || . ex/util/throw 12 "Assemble \"$ARTIFACT\" error $?!"
+ || . ex/util/throw 121 "Assemble \"$ARTIFACT\" error!"
 . ex/util/assert -f $REPOSITORY/lib/build/libs/$ARTIFACT
-mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT || exit 1 # todo
+mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT \
+ || . ex/util/throw 122 "Install \"$ARTIFACT\" error!"
 
 ARTIFACT="${REPOSITORY_NAME}-${TAG}.pom"
 gradle -p "$REPOSITORY" lib:assembleSnapshotPom \
- || . ex/util/throw 12 "Assemble \"$ARTIFACT\" error $?!"
+ || . ex/util/throw 131 "Assemble \"$ARTIFACT\" error!"
 . ex/util/assert -f $REPOSITORY/lib/build/libs/$ARTIFACT
-mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT || exit 1 # todo
-
-exit 0
+mv $REPOSITORY/lib/build/libs/$ARTIFACT assemble/project/artifact/$ARTIFACT \
+ || . ex/util/throw 132 "Install \"$ARTIFACT\" error!"
