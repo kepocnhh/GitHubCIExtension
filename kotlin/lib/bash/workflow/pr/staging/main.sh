@@ -19,5 +19,3 @@ ex/workflow/pr/check_state.sh "closed" || exit 44
 ex/workflow/pr/staging/on_success.sh || exit 91
 
 echo "Workflow pull request staging finish."
-
-exit 0
