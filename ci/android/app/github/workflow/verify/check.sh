@@ -21,7 +21,7 @@ ex/android/app/project/diagnostics/common.sh \
  && ex/github/diagnostics/report.sh \
  || . ex/util/throw 21 "Diagnostics unexpected error!"
 
-ex/workflow/verify/on_failed.sh \
+ci/workflow/verify/on_failed.sh \
  || . ex/util/throw 22 "On failed unexpected error!"
 
 exit 31
