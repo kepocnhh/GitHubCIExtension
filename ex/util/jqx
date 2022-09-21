@@ -33,9 +33,7 @@ esac
 
 RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; CODE=$?
 if test $CODE -ne 0; then
- . ex/util/throw 14 "Json parse by option \"$JQX_OPTION\" error!" > $OUTPUT
+ . ex/util/throw 14 "Json parse $JSON_FILE by option \"$JQX_OPTION\" error!" > $OUTPUT
 fi
 
 echo "$RESULT"
-
-exit 0
