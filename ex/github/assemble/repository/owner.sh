@@ -8,7 +8,7 @@ REPOSITORY_OWNER_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .owner.url)
 mkdir -p assemble/vcs/repository || exit 1 # todo
 
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/repository/owner.json $REPOSITORY_OWNER_URL)
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/repository/owner.json $REPOSITORY_OWNER_URL)
 if test $CODE -ne 200; then
  echo "Get repository owner $REPOSITORY_OWNER_URL error!"
  echo "Request error with response code $CODE!"

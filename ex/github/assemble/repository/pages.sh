@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Assemble VCS repository owner..."
+echo "Assemble VCS repository pages..."
 
 . ex/util/require VCS_PAT
 

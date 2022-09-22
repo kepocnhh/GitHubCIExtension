@@ -5,7 +5,7 @@ echo "Assemble VCS worker..."
 . ex/util/require VCS_DOMAIN VCS_PAT
 
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/worker.json \
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/worker.json \
  "$VCS_DOMAIN/user" \
  -H "Authorization: token $VCS_PAT")
 if test $CODE -ne 200; then

@@ -7,7 +7,7 @@ echo "Assemble project common..."
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
 
-gradle -p $REPOSITORY saveCommonInfo \
+gradle -q -p $REPOSITORY saveCommonInfo \
  || . ex/util/throw 11 "Save common info error!"
 
 JSON_FILE=$REPOSITORY/build/common.json

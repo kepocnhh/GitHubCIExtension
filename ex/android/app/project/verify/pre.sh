@@ -5,5 +5,6 @@ echo "Project pre verify..."
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
 
-gradle -p $REPOSITORY verifyService \
+echo "Verify service..."
+gradle -q -p $REPOSITORY verifyService \
  || . ex/util/throw 11 "Gradle verify service error!"

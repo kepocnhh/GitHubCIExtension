@@ -8,7 +8,7 @@ GIT_COMMIT_SHA="$(git -C repository rev-parse HEAD)" \
 . ex/util/require VCS_DOMAIN REPOSITORY_OWNER REPOSITORY_NAME GIT_COMMIT_SHA
 
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/commit.json \
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/commit.json \
  "$VCS_DOMAIN/repos/$REPOSITORY_OWNER/$REPOSITORY_NAME/commits/$GIT_COMMIT_SHA")
 if test $CODE -ne 200; then
  echo "Get commit $GIT_COMMIT_SHA info error!"
@@ -25,7 +25,7 @@ echo "The commit $COMMIT_HTML_URL is ready."
 
 mkdir -p assemble/vcs/commit || exit 1 # todo
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/commit/author.json \
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/commit/author.json \
  "$VCS_DOMAIN/users/$AUTHOR_LOGIN")
 if test $CODE -ne 200; then
  echo "Get author info error!"

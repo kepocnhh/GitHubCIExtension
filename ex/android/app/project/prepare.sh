@@ -14,8 +14,10 @@ cp assemble/project/${KEY_ALIAS}.pkcs12 $RESOURCES/key.pkcs12 \
 echo "password=${KEYSTORE_PASSWORD//"\\"/"\\\\"}" > $RESOURCES/properties \
  || . $SCRIPTS/util/throw 12 "Install keystore password error!"
 
-gradle -p $REPOSITORY clean \
+echo "Clean..."
+gradle -q -p $REPOSITORY clean \
  || . ex/util/throw 21 "Gradle clean error!"
 
-gradle -p $REPOSITORY app:compile${BUILD_VARIANT}Sources \
+echo "Compile..."
+gradle -q -p $REPOSITORY app:compile${BUILD_VARIANT}Sources \
  || . ex/util/throw 22 "Gradle compile \"${BUILD_VARIANT}\" error!"
