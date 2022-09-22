@@ -9,7 +9,7 @@ REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .repository.nam
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/repository.json $REPOSITORY_URL)
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/repository.json $REPOSITORY_URL)
 if test $CODE -ne 200; then
  echo "Get repository $REPOSITORY_NAME error!"
  echo "Request error with response code $CODE!"

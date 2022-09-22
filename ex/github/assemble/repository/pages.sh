@@ -7,14 +7,17 @@ echo "Assemble VCS repository owner..."
 REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 
+REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
+ || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+
 mkdir -p assemble/vcs/repository || exit 1 # todo
 
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/repository/pages.json \
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/repository/pages.json \
  "$REPOSITORY_URL/pages" \
  -H "Authorization: token $VCS_PAT")
 if test $CODE -ne 200; then
- echo "Get pages $REPOSITORY_URL error!"
+ echo "Get pages $REPOSITORY_HTML_URL error!"
  echo "Request error with response code $CODE!"
  exit 11
 fi

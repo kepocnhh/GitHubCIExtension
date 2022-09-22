@@ -7,7 +7,7 @@ echo "Assemble VCS actions run..."
 mkdir -p assemble/vcs/actions || exit 1 # todo
 
 CODE=0
-CODE=$(curl -w %{http_code} -o assemble/vcs/actions/run.json \
+CODE=$(curl -s -w %{http_code} -o assemble/vcs/actions/run.json \
  "$VCS_DOMAIN/repos/$REPOSITORY_OWNER/$REPOSITORY_NAME/actions/runs/$CI_BUILD_ID")
 if test $CODE -ne 200; then
  echo "Get actions run $CI_BUILD_ID error!"
