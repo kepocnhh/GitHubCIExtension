@@ -62,7 +62,7 @@ fi
 
 TYPES="$(jq -Mcer "keys" diagnostics/summary.json)" || exit 1 # todo
 if test "$TYPES" == "[]"; then
- echo "Diagnostics should have determined the cause of the failure!"; exit 1 # todo
+ echo "Diagnostics should have determined the cause of the failure!"; exit 0
 fi
 
 echo "Diagnostics have determined the cause of the failure - this is: $TYPES."
