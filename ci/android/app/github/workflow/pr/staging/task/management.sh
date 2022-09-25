@@ -28,8 +28,6 @@ done
 
 . ci/workflow/pr/staging/tag.sh
 
-exit 1 # todo
-
 ex/github/labels.sh || exit 32
 SIZE=${#ISSUES[*]}
 echo "[]" > assemble/github/fixed.json
