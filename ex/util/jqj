@@ -1,0 +1,24 @@
+#!/bin/bash
+
+OUTPUT=/tmp/jqj.o
+
+. ex/util/args/require $# 3 > $OUTPUT
+
+JQ_OPTION="$1"
+JSON_BODY="$2"
+JSON_QUERY="$3"
+
+. ex/util/require JQ_OPTION JSON_BODY JSON_QUERY > $OUTPUT
+
+case "$JQ_OPTION" in
+ -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;
+ -si) JSON_OPTION="select((.!=null)and(type==\"number\"))";;
+ *) . ex/util/throw 31 "JQ | Option \"$JQ_OPTION\" is not supported!" > $OUTPUT;;
+esac
+
+RESULT="$(echo "$JSON_BODY" | jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" 2> $OUTPUT)"; CODE=$?
+if test $CODE -ne 0; then
+ . ex/util/throw 41 "Json parse \"$JSON_BODY\" by option \"$JQ_OPTION\" error!" > $OUTPUT
+fi
+
+echo "$RESULT"
