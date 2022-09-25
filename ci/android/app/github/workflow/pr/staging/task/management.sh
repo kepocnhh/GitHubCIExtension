@@ -28,7 +28,8 @@ done
 
 . ci/workflow/pr/staging/tag.sh
 
-ex/github/labels.sh || exit 32
+ex/github/labels.sh \
+ || . ex/util/throw 12 "Illegal state!"
 SIZE=${#ISSUES[*]}
 echo "[]" > assemble/github/fixed.json
 ISSUES=($(printf "%s\n" "${ISSUES[@]}" | sort -u))
@@ -53,7 +54,9 @@ for ((i=0; i<SIZE; i++)); do
   || . ex/util/throw $((100 + $i)) "Illegal state!"
 done
 
+ci/workflow/pr/release/note/markdown.sh "$TAG" \
+ || . ex/util/throw 21 "Illegal state!"
+
 exit 1 # todo
 
-ci/workflow/pr/release/note/html.sh "$TAG" || exit 1 # todo
 ex/vcs/release/note.sh "$TAG" || exit 1 # todo
