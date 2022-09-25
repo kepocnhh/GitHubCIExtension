@@ -19,12 +19,14 @@ CI_BUILD_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
 
 GIT_COMMIT_SHA=$(ex/util/jqx -sfs assemble/vcs/commit.json .sha) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-BODY="$(echo "{}" | jq -Mc ".name=\"$TAG\"")"
-BODY="$(echo "$BODY" | jq -Mc ".tag_name=\"$TAG\"")"
-BODY="$(echo "$BODY" | jq -Mc ".target_commitish=\"$GIT_COMMIT_SHA\"")"
-BODY="$(echo "$BODY" | jq -Mc ".body=\"CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)\"")"
-BODY="$(echo "$BODY" | jq -Mc ".draft=false")"
-BODY="$(echo "$BODY" | jq -Mc ".prerelease=true")"
+BODY="{}"
+. ex/util/jqm BODY \
+ ".name=\"$TAG\"" \
+ ".tag_name=\"$TAG\"" \
+ ".target_commitish=\"$GIT_COMMIT_SHA\"" \
+ ".body=\"CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)\"" \
+ ".draft=false" \
+ ".prerelease=true"
 mkdir -p assemble/github
 ex/github/release.sh "$BODY" || exit 11
 
@@ -34,10 +36,12 @@ ASSETS="[]"
 for it in \
  "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk" \
  "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk.sig"; do
- ASSET="$(echo "{}" | jq -Mc ".name=\"$it\"")"
- ASSET="$(echo "$ASSET" | jq -Mc ".label=\"$it\"")"
- ASSET="$(echo "$ASSET" | jq -Mc ".path=\"assemble/project/artifact/$it\"")"
- ASSETS="$(echo "$ASSETS" | jq -Mc ".+=[$ASSET]")"
+ ASSET="{}"
+ . ex/util/jqm ASSET \
+  ".name=\"$it\"" \
+  ".label=\"$it\"" \
+  ".path=\"assemble/project/artifact/$it\""
+ . ex/util/jqm ASSETS ".+=[$ASSET]"
 done
 
 ex/github/release/upload/asset.sh "$ASSETS" || exit 31
