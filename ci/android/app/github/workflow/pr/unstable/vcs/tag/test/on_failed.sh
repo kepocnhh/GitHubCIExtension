@@ -25,8 +25,6 @@ REPOSITORY_OWNER_LOGIN=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .lo
 REPOSITORY_OWNER_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .html_url) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
@@ -53,9 +51,9 @@ MESSAGE="CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL) failed!
 
 [$REPOSITORY_OWNER_LOGIN]($REPOSITORY_OWNER_HTML_URL) / [$REPOSITORY_NAME]($REPOSITORY_HTML_URL)
 
-The pull request [#$PR_NUMBER]($REPOSITORY_URL/pull/$PR_NUMBER)
- - source [${GIT_COMMIT_SRC::7}]($REPOSITORY_URL/commit/$GIT_COMMIT_SRC) by [$AUTHOR_NAME_SRC]($AUTHOR_HTML_URL_SRC)
- - destination [${GIT_COMMIT_DST::7}]($REPOSITORY_URL/commit/$GIT_COMMIT_DST) by [$AUTHOR_NAME_DST]($AUTHOR_HTML_URL_DST)
+The pull request [#$PR_NUMBER]($REPOSITORY_HTML_URL/pull/$PR_NUMBER)
+ - source [${GIT_COMMIT_SRC::7}]($REPOSITORY_HTML_URL/commit/$GIT_COMMIT_SRC) by [$AUTHOR_NAME_SRC]($AUTHOR_HTML_URL_SRC)
+ - destination [${GIT_COMMIT_DST::7}]($REPOSITORY_HTML_URL/commit/$GIT_COMMIT_DST) by [$AUTHOR_NAME_DST]($AUTHOR_HTML_URL_DST)
  - tag \`$TAG\` test failed!
  - closed by [$WORKER_NAME]($WORKER_HTML_URL)"
 
