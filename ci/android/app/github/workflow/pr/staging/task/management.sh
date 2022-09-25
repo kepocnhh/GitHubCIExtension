@@ -48,10 +48,9 @@ CI_BUILD_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
 TAG_URL="$REPOSITORY_HTML_URL/releases/tag/$TAG"
 MESSAGE="Marked as \`$LABEL_NAME_TARGET\` in [$TAG]($TAG_URL) by CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)."
 
-exit 1 # todo
-
 for ((i=0; i<SIZE; i++)); do
- ci/workflow/pr/staging/task/fix.sh "${ISSUES[$i]}" "$MESSAGE" || exit 1 # todo
+ ci/workflow/pr/staging/task/fix.sh "${ISSUES[$i]}" "$MESSAGE" \
+  || . ex/util/throw $((100 + $i)) "Illegal state!"
 done
 
 exit 1 # todo
