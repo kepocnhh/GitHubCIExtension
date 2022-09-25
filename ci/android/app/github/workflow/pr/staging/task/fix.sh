@@ -9,7 +9,7 @@ MESSAGE="$2"
 
 . ex/util/require ISSUE_NUMBER MESSAGE LABEL_ID_STAGING LABEL_ID_SNAPSHOT
 
-ex/github/issue.sh "$ISSUE_NUMBER" || exit 1 # todo
+ex/github/issue.sh "$ISSUE_NUMBER" || . ex/util/throw 11 "Illegal state!"
 
 LABEL_ID=$LABEL_ID_STAGING
 IS_READY_FOR_TEST="$(jq ".labels|any(.id==$LABEL_ID)" assemble/github/issue${ISSUE_NUMBER}.json)"
