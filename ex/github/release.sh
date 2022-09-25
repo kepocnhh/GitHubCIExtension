@@ -13,7 +13,7 @@ RELEASE_NAME=$(ex/util/jqj -sfs "$BODY" .name) \
 REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 
-CODE=$(curl -w %{http_code} -o assemble/github/release.json -X POST \
+CODE=$(curl -s -w %{http_code} -o assemble/github/release.json -X POST \
  "$REPOSITORY_URL/releases" \
  -H "Authorization: token $VCS_PAT" \
  -d "$BODY")
