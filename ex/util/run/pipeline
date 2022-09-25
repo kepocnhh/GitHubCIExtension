@@ -1,0 +1,10 @@
+#!/bin/bash
+
+[ $# -eq 0 ] && . ex/util/throw 11 "Empty arguments!"
+
+for ((i=1; i<=$#; i++)); do
+ COMMAND="${!i}"
+ . ex/util/require COMMAND
+ echo "Start [$i/$#] command..."
+ $COMMAND || . ex/util/throw $((100 + $i)) "Command [$i/$#] error!"
+done

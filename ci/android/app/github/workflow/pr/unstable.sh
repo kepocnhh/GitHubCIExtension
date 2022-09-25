@@ -2,13 +2,17 @@
 
 echo "Workflow pull request unstable start..."
 
-ci/workflow/pr/unstable/assemble/vcs.sh || exit 11
-ci/workflow/pr/merge.sh || exit 12
-ci/workflow/pr/unstable/assemble/project/prepare.sh || exit 13
+WORKFLOW=ci/workflow/pr/unstable
 
-ci/workflow/pr/unstable/vcs/tag/test.sh || exit 21
-ci/workflow/pr/unstable/vcs/push.sh || exit 22
-ci/workflow/pr/unstable/vcs/release.sh || exit 23
-ci/workflow/pr/check_state.sh "closed" || exit 24
+ex/util/run/pipeline \
+ $WORKFLOW/assemble/vcs.sh \
+ ci/workflow/pr/merge.sh \
+ $WORKFLOW/assemble/project/prepare.sh || exit 21
 
-ci/workflow/pr/unstable/on_success.sh || exit 31
+ex/util/run/pipeline \
+ $WORKFLOW/vcs/tag/test.sh \
+ $WORKFLOW/vcs/push.sh \
+ $WORKFLOW/vcs/release.sh \
+ && ci/workflow/pr/check_state.sh "closed" || exit 22
+
+$WORKFLOW/on_success.sh || exit 23
