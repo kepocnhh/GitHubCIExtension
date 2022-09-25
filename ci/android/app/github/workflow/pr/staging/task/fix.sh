@@ -42,4 +42,4 @@ fi
 ex/github/issue/comment.sh "$ISSUE_NUMBER" "$MESSAGE" || exit 1 # todo
 echo "$(jq ".+[$(cat assemble/github/issue${ISSUE_NUMBER}.json)]" assemble/github/fixed.json)" \
  > assemble/github/fixed.json || exit 1 # todo
-ex/workflow/pr/task/patch.sh "$ISSUE_NUMBER" "$LABEL_ID_STAGING" || exit 1 # todo
+ci/workflow/pr/task/patch.sh "$ISSUE_NUMBER" "$LABEL_ID_STAGING" || exit 1 # todo
