@@ -8,7 +8,7 @@ TAG="$1"
 
 . ex/util/require TAG
 
-. ex/util/jq/w REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
 TAG_URL="$REPOSITORY_HTML_URL/releases/tag/$TAG"
 RELEASE_NOTE="## Release note [$TAG]($TAG_URL)"
@@ -21,9 +21,9 @@ else
 ### Fixed:"
  FILE="assemble/github/fixed.json"
  for ((i=0; i<SIZE; i++)); do
-  . ex/util/jq/w ISSUE_NUMBER -si "$FILE" ".[$i].number"
-  . ex/util/jq/w ISSUE_TITLE -sfs "$FILE" ".[$i].title"
-  . ex/util/jq/w ISSUE_HTML_URL -sfs "$FILE" ".[$i].html_url"
+  . ex/util/jq/write ISSUE_NUMBER -si "$FILE" ".[$i].number"
+  . ex/util/jq/write ISSUE_TITLE -sfs "$FILE" ".[$i].title"
+  . ex/util/jq/write ISSUE_HTML_URL -sfs "$FILE" ".[$i].html_url"
   RELEASE_NOTE="$RELEASE_NOTE
 - [#$ISSUE_NUMBER]($ISSUE_HTML_URL) $ISSUE_TITLE"
  done

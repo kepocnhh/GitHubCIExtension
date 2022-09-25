@@ -8,9 +8,9 @@ TAG="$1"
 
 . ex/util/require VCS_DOMAIN VCS_PAT TAG
 
-. ex/util/jq/w WORKER_NAME -sfs assemble/vcs/worker.json .name
-. ex/util/jq/w WORKER_VCS_EMAIL -sfs assemble/vcs/worker.json .vcs_email
-. ex/util/jq/w REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+. ex/util/jq/write WORKER_NAME -sfs assemble/vcs/worker.json .name
+. ex/util/jq/write WORKER_VCS_EMAIL -sfs assemble/vcs/worker.json .vcs_email
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
 REPOSITORY=pages/release/note
 mkdir -p $REPOSITORY || . ex/util/throw 11 "Illegal state!"
@@ -22,7 +22,7 @@ git -C $REPOSITORY init \
  && git -C $REPOSITORY checkout gh-pages \
  || . ex/util/throw 21 "Git checkout error!"
 
-. ex/util/jq/w CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
+. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 
 . ex/util/assert -f assemble/github/release_note.md
 
