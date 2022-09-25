@@ -2,7 +2,7 @@
 
 echo "Workflow pull request unstable VCS release..."
 
-. ex/workflow/pr/unstable/tag.sh
+. ci/workflow/pr/unstable/tag.sh
 . ex/android/app/project/version.sh
 
 . ex/util/require ARTIFACT_VERSION TAG

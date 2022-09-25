@@ -12,7 +12,7 @@ REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
 . ex/util/require VCS_DOMAIN REPOSITORY_OWNER REPOSITORY_NAME TAG
 
 CODE=0
-CODE=$(curl -w %{http_code} -o /tmp/tag.json "$REPOSITORY_URL/git/refs/tags/$TAG")
+CODE=$(curl -s -w %{http_code} -o /tmp/tag.json "$REPOSITORY_URL/git/refs/tags/$TAG")
 case $CODE in
  404)
   REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
