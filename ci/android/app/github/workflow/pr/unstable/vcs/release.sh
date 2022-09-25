@@ -30,7 +30,7 @@ BODY="{}"
 mkdir -p assemble/github
 ex/github/release.sh "$BODY" || exit 11
 
-ex/android/app/project/sign/artifact/verify.sh "$TAG" || exit 21
+ex/android/app/project/sign/artifact/verify.sh "$ARTIFACT_VERSION" || exit 21
 
 ASSETS="[]"
 for it in \
