@@ -57,6 +57,4 @@ done
 ci/workflow/pr/release/note/markdown.sh "$TAG" \
  || . ex/util/throw 21 "Illegal state!"
 
-exit 1 # todo
-
-ex/vcs/release/note.sh "$TAG" || exit 1 # todo
+ex/github/release/note.sh "$TAG" || exit 1 # todo

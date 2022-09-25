@@ -6,10 +6,9 @@ echo "Workflow pull request release note markdown..."
 
 TAG="$1"
 
-. ex/util/require REPOSITORY_OWNER REPOSITORY_NAME TAG
+. ex/util/require TAG
 
-REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/w REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
 TAG_URL="$REPOSITORY_HTML_URL/releases/tag/$TAG"
 RELEASE_NOTE="## Release note [$TAG]($TAG_URL)"
@@ -22,12 +21,9 @@ else
 ### Fixed:"
  FILE="assemble/github/fixed.json"
  for ((i=0; i<SIZE; i++)); do
-  ISSUE_NUMBER=$(ex/util/jqx -si "$FILE" ".[$i].number") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-  ISSUE_TITLE=$(ex/util/jqx -sfs "$FILE" ".[$i].title") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-  ISSUE_HTML_URL=$(ex/util/jqx -sfs "$FILE" ".[$i].html_url") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+  . ex/util/jq/w ISSUE_NUMBER -si "$FILE" ".[$i].number"
+  . ex/util/jq/w ISSUE_TITLE -sfs "$FILE" ".[$i].title"
+  . ex/util/jq/w ISSUE_HTML_URL -sfs "$FILE" ".[$i].html_url"
   RELEASE_NOTE="$RELEASE_NOTE
 - [#$ISSUE_NUMBER]($ISSUE_HTML_URL) $ISSUE_TITLE"
  done
