@@ -23,4 +23,4 @@ ISSUE_LABELS="$(echo "$ISSUE_LABELS" | jq ".+[$LABEL_TARGET]")"
 ISSUE="$(echo "{}" | jq ".labels=$ISSUE_LABELS")"
 
 ex/github/issue/patch.sh "$ISSUE_NUMBER" "$ISSUE" \
- || . ex/util/throw 33 "Issue patch unexpected error!"
+ || . ex/util/throw 21 "Issue patch unexpected error!"
