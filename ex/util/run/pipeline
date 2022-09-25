@@ -5,6 +5,6 @@
 for ((i=1; i<=$#; i++)); do
  COMMAND="${!i}"
  . ex/util/require COMMAND
- echo "Start [$i/$#] command..."
+ echo -e "\n\t>--\tstart [$i/$#] command\t-->"
  $COMMAND || . ex/util/throw $((100 + $i)) "Command [$i/$#] error!"
 done
