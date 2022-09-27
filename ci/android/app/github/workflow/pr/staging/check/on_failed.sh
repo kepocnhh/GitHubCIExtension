@@ -5,9 +5,6 @@ echo "Workflow pull request staging check on failed start..."
 ex/github/pr/close.sh \
  || . ex/util/throw 11 "Illegal state!"
 
-. ex/util/require REPOSITORY_OWNER REPOSITORY_NAME \
- GITHUB_RUN_NUMBER GITHUB_RUN_ID PR_NUMBER
-
 VERIFY_RESULT=" - see the report:"
 ENVIRONMENT=diagnostics/summary.json
 TYPES=($(jq -Mcer "keys|.[]" $ENVIRONMENT))
@@ -16,10 +13,8 @@ if test $SIZE == 0; then
  echo "Diagnostics should have determined the cause of the failure!"; exit 12
 fi
 
-CI_BUILD_NUMBER=$(ex/util/jqx -si assemble/vcs/actions/run.json .run_number) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-CI_BUILD_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
+. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
 REPOSITORY_PAGES_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository/pages.json .html_url) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
@@ -41,15 +36,15 @@ $VERIFY_RESULT"
 ex/github/pr/comment.sh "$MESSAGE" \
  || . ex/util/throw 21 "Illegal state!"
 
-REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
 REPOSITORY_OWNER_LOGIN=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .login) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 REPOSITORY_OWNER_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .html_url) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+
+. ex/util/require PR_NUMBER
 
 GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha) \
  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
