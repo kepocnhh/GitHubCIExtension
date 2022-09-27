@@ -2,9 +2,11 @@
 
 [ $# -eq 0 ] && . ex/util/throw 11 "Empty arguments!"
 
+PIPELINE_ID=$(date +%s)
+
 for ((i=1; i<=$#; i++)); do
  COMMAND="${!i}"
  . ex/util/require COMMAND
- echo -e "\n\t>--\tstart [$i/$#] command\t-->"
+ echo -e "\n\t>--\tstart $PIPELINE_ID [$i/$#] command\t-->"
  $COMMAND || . ex/util/throw $((100 + $i)) "Command [$i/$#] error!"
 done
