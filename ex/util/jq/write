@@ -35,8 +35,7 @@ case "$JQ_OPTION" in
 esac
 
 JQ_RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; JQ_CODE=$?
-if test $JQ_CODE -ne 0; then
- . ex/util/throw 14 "Json parse $JSON_FILE by option \"$JQ_OPTION\" error!" > $OUTPUT
-fi
+[ $JQ_CODE -ne 0 ] \
+ && . ex/util/throw 14 "Json parse $JSON_FILE by option \"$JQ_OPTION\" error!" > $OUTPUT
 
 printf -v "$JQ_VARIABLE" '%s' "$JQ_RESULT"

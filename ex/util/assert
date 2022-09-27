@@ -10,15 +10,17 @@ case "$ASSERT_OPTION" in
   ASSERT_EXPECTED="$2"
   ASSERT_ACTUAL="$3"
   . ex/util/require $ASSERT_EXPECTED $ASSERT_ACTUAL
-  [ "${!ASSERT_EXPECTED}" != "${!ASSERT_ACTUAL}" ] \
-   && . ex/util/throw 21 "Actual is \"${!ASSERT_ACTUAL}\", but expected is \"${!ASSERT_EXPECTED}\"!";;
+  if test "${!ASSERT_EXPECTED}" != "${!ASSERT_ACTUAL}"; then
+   . ex/util/throw 21 "Actual is \"${!ASSERT_ACTUAL}\", but expected is \"${!ASSERT_EXPECTED}\"!"
+  fi;;
  -eqv)
   . ex/util/args/require $# 3
   ASSERT_EXPECTED="$2"
   ASSERT_ACTUAL="$3"
   . ex/util/require ASSERT_EXPECTED ASSERT_ACTUAL
-  [ "$ASSERT_EXPECTED" != "$ASSERT_ACTUAL" ] \
-   && . ex/util/throw 22 "Actual is \"$ASSERT_ACTUAL\", but expected is \"$ASSERT_EXPECTED\"!";;
+  if test "$ASSERT_EXPECTED" != "$ASSERT_ACTUAL"; then
+   . ex/util/throw 22 "Actual is \"$ASSERT_ACTUAL\", but expected is \"$ASSERT_EXPECTED\"!"
+  fi;;
  -f)
   [ $# -eq 1 ] && . ex/util/throw 131 "Script needs more arguments!"
   for (( FILE_PATH_INDEX=2; FILE_PATH_INDEX<=$#; FILE_PATH_INDEX++ )); do
@@ -30,6 +32,8 @@ case "$ASSERT_OPTION" in
   . ex/util/args/require $# 2
   DIR_PATH="$2"
   . ex/util/require DIR_PATH
-  [ ! -d "$DIR_PATH" ] && . ex/util/throw 24 "Dir \"$DIR_PATH\" does not exist!";;
+  if [ ! -d "$DIR_PATH" ]; then
+   . ex/util/throw 24 "Dir \"$DIR_PATH\" does not exist!"
+  fi;;
  *) echo "Assert | Option \"$ASSERT_OPTION\" is not supported!"; exit 91;;
 esac
