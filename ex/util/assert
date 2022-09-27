@@ -16,7 +16,7 @@ case "$ASSERT_OPTION" in
   . ex/util/args/require $# 3
   ASSERT_EXPECTED="$2"
   ASSERT_ACTUAL="$3"
-   . ex/util/require ASSERT_EXPECTED ASSERT_ACTUAL
+  . ex/util/require ASSERT_EXPECTED ASSERT_ACTUAL
   [ "$ASSERT_EXPECTED" != "$ASSERT_ACTUAL" ] \
    && . ex/util/throw 22 "Actual is \"$ASSERT_ACTUAL\", but expected is \"$ASSERT_EXPECTED\"!";;
  -f)

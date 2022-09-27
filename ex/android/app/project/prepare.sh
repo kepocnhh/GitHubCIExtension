@@ -9,10 +9,10 @@ REPOSITORY=repository
 
 RESOURCES=$REPOSITORY/app/src/$BUILD_VARIANT/resources
 cp assemble/project/${KEY_ALIAS}.pkcs12 $RESOURCES/key.pkcs12 \
- || . $SCRIPTS/util/throw 11 "Install keystore error!"
+ || . ex/util/throw 11 "Install keystore error!"
 
 echo "password=${KEYSTORE_PASSWORD//"\\"/"\\\\"}" > $RESOURCES/properties \
- || . $SCRIPTS/util/throw 12 "Install keystore password error!"
+ || . ex/util/throw 12 "Install keystore password error!"
 
 echo "Clean..."
 gradle -q -p $REPOSITORY clean \

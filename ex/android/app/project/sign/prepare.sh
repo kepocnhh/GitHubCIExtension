@@ -4,6 +4,7 @@ echo "Project sign prepare..."
 
 . ex/util/require KEYSTORE KEYSTORE_PASSWORD KEY_ALIAS KEY_X509_SHA512
 
+echo "Install keystore..."
 echo "$KEYSTORE" | base64 -d > assemble/project/${KEY_ALIAS}.pkcs12 \
  || . ex/util/throw 11 "Keystore error!"
 
