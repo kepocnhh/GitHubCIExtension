@@ -1,37 +1,28 @@
 #!/bin/bash
 
-if test $# -eq 0; then
- echo "Empty arguments!"; exit 11
-fi
+[ $# -eq 0 ] && . ex/util/throw 11 "Empty arguments!"
 
 ASSERT_OPTION="$1"
 
 case "$ASSERT_OPTION" in
  -eq)
   . ex/util/args/require $# 3
-  EXPECTED="$2"
-  ACTUAL="$3"
-  . ex/util/require $EXPECTED $ACTUAL
-  if test "${!EXPECTED}" != "${!ACTUAL}"; then
-   echo "Actual is \"${!ACTUAL}\", but expected is \"${!EXPECTED}\"!"; exit 21
-  fi;;
+  ASSERT_EXPECTED="$2"
+  ASSERT_ACTUAL="$3"
+  . ex/util/require $ASSERT_EXPECTED $ASSERT_ACTUAL
+  [ "${!ASSERT_EXPECTED}" != "${!ASSERT_ACTUAL}" ] \
+   && . ex/util/throw 21 "Actual is \"${!ASSERT_ACTUAL}\", but expected is \"${!ASSERT_EXPECTED}\"!";;
  -eqv)
   . ex/util/args/require $# 3
-  EXPECTED="$2"
-  if test -z "$EXPECTED"; then
-   echo "Expected is empty!"; exit 121
-  fi
-  ACTUAL="$3"
-  if test -z "$ACTUAL"; then
-   echo "Actual is empty!"; exit 122
-  fi
-  if test "$EXPECTED" != "$ACTUAL"; then
-   echo "Actual is \"$ACTUAL\", but expected is \"$EXPECTED\"!"; exit 22
-  fi;;
+  ASSERT_EXPECTED="$2"
+  ASSERT_ACTUAL="$3"
+   . ex/util/require ASSERT_EXPECTED ASSERT_ACTUAL
+  [ "$ASSERT_EXPECTED" != "$ASSERT_ACTUAL" ] \
+   && . ex/util/throw 22 "Actual is \"$ASSERT_ACTUAL\", but expected is \"$ASSERT_EXPECTED\"!";;
  -f)
   [ $# -eq 1 ] && . ex/util/throw 131 "Script needs more arguments!"
-  for (( i=2; i<=$#; i++ )); do
-   FILE_PATH="${!i}"
+  for (( FILE_PATH_INDEX=2; FILE_PATH_INDEX<=$#; FILE_PATH_INDEX++ )); do
+   FILE_PATH="${!FILE_PATH_INDEX}"
    . ex/util/require FILE_PATH
    [ ! -s "$FILE_PATH" ] && . ex/util/throw 132 "File \"$FILE_PATH\" does not exist!"
   done;;
@@ -39,8 +30,6 @@ case "$ASSERT_OPTION" in
   . ex/util/args/require $# 2
   DIR_PATH="$2"
   . ex/util/require DIR_PATH
-  if [ ! -d "$DIR_PATH" ]; then
-   echo "Dir $DIR_PATH does not exist!"; exit 24
-  fi;;
+  [ ! -d "$DIR_PATH" ] && . ex/util/throw 24 "Dir \"$DIR_PATH\" does not exist!";;
  *) echo "Assert | Option \"$ASSERT_OPTION\" is not supported!"; exit 91;;
 esac

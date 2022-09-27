@@ -2,18 +2,16 @@
 
 . ex/util/args/require $# 2
 
-CODE=$1
-MESSAGE="$2"
+THROW_CODE=$1
+THROW_MESSAGE="$2"
 
-. ex/util/require CODE MESSAGE
+. ex/util/require THROW_CODE THROW_MESSAGE
 
-echo "$MESSAGE"
-
-if [[ "$CODE" =~ [1-9][0-9]* ]]; then
- if test $CODE -eq 0; then
+if [[ "$THROW_CODE" =~ [1-9][0-9]* ]]; then
+ if test $THROW_CODE -eq 0; then
   echo "Unknown error code!"; exit 13
  fi
- exit $CODE
+ echo "$THROW_MESSAGE"; exit $THROW_CODE
 fi
 
-echo "Code format error \"$CODE\"!"; exit 14
+echo "Code format error \"$THROW_CODE\"!"; exit 14

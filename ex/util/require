@@ -4,9 +4,9 @@ if test $# -eq 0; then
  echo "Empty arguments!"; exit 11
 fi
 
-for (( INDEX=1; INDEX<=$#; INDEX++ )); do
- ARGUMENT="${!INDEX}"
- if test -z "${!ARGUMENT}"; then
-  echo "Argument \"$ARGUMENT\" is empty!"; exit $((100+INDEX))
+for (( REQUIRE_INDEX=1; REQUIRE_INDEX<=$#; REQUIRE_INDEX++ )); do
+ REQUIRE_ARGUMENT="${!REQUIRE_INDEX}"
+ if test -z "${!REQUIRE_ARGUMENT}"; then
+  echo "Argument \"$REQUIRE_ARGUMENT\" is empty!"; exit $((100+REQUIRE_INDEX))
  fi
 done

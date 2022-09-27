@@ -16,9 +16,10 @@ case "$JQ_OPTION" in
  *) . ex/util/throw 31 "JQ | Option \"$JQ_OPTION\" is not supported!" > $OUTPUT;;
 esac
 
-RESULT="$(echo "$JSON_BODY" | jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" 2> $OUTPUT)"; CODE=$?
-if test $CODE -ne 0; then
- . ex/util/throw 41 "Json parse \"$JSON_BODY\" by option \"$JQ_OPTION\" error!" > $OUTPUT
-fi
+JQ_CODE=0
 
-echo "$RESULT"
+JQ_RESULT="$(echo "$JSON_BODY" | jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" 2> $OUTPUT)"; JQ_CODE=$?
+[ $JQ_CODE -ne 0 ] \
+ && . ex/util/throw 41 "Json parse \"$JSON_BODY\" by option \"$JQ_OPTION\" error!" > $OUTPUT
+
+echo "$JQ_RESULT"

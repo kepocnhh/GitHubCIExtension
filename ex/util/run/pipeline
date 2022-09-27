@@ -4,9 +4,9 @@
 
 PIPELINE_ID=$(date +%s)
 
-for ((i=1; i<=$#; i++)); do
- COMMAND="${!i}"
- . ex/util/require COMMAND
- echo -e "\n\t>--\tstart $PIPELINE_ID [$i/$#] command\t-->"
- $COMMAND || . ex/util/throw $((100 + $i)) "Command [$i/$#] error!"
+for ((PIPELINE_INDEX=1; PIPELINE_INDEX<=$#; PIPELINE_INDEX++)); do
+ PIPELINE_COMMAND="${!PIPELINE_INDEX}"
+ . ex/util/require PIPELINE_COMMAND
+ echo -e "\n\t>--\tstart $PIPELINE_ID [$PIPELINE_INDEX/$#] command\t-->"
+ $PIPELINE_COMMAND || . ex/util/throw $((100 + $PIPELINE_INDEX)) "Command [$PIPELINE_INDEX/$#] error!"
 done

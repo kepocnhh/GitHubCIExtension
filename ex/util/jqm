@@ -4,17 +4,17 @@ OUTPUT=/tmp/jqm.o
 
 [ $# -lt 2 ] && . ex/util/throw 11 "Script needs more arguments!" > $OUTPUT
 
-VARIABLE="$1"
+JQ_VARIABLE="$1"
 
-. ex/util/require VARIABLE > $OUTPUT
+. ex/util/require JQ_VARIABLE > $OUTPUT
 
-CODE=0
-for ((i=2; i<=$#; i++)); do
- JSON_QUERY="${!i}"
+JQ_CODE=0
+for ((JSON_QUERY_INDEX=2; JSON_QUERY_INDEX<=$#; JSON_QUERY_INDEX++)); do
+ JSON_QUERY="${!JSON_QUERY_INDEX}"
  . ex/util/require JSON_QUERY > $OUTPUT
- tmp="$(echo "${!VARIABLE}" | jq -Mc "$JSON_QUERY")"; CODE=$?
- if test $CODE -ne 0; then
-  . ex/util/throw $((100 + $i)) "Json merge [$(($i - 1))/$(($# - 1))] \"$VARIABLE\" error!" > $OUTPUT
- fi
- printf -v "$VARIABLE" '%s' "$tmp"
+ JQ_RESULT="$(echo "${!JQ_VARIABLE}" | jq -Mc "$JSON_QUERY")"; JQ_CODE=$?
+ [ $JQ_CODE -ne 0 ] \
+  && . ex/util/throw $((100 + $JSON_QUERY_INDEX)) \
+   "Json merge [$(($JSON_QUERY_INDEX - 1))/$(($# - 1))] \"$JQ_VARIABLE\" error!" > $OUTPUT
+ printf -v "$JQ_VARIABLE" '%s' "$JQ_RESULT"
 done
