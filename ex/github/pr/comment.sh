@@ -8,12 +8,11 @@ COMMENT="$1"
 COMMENT=${COMMENT//$'\n'/"\n"}
 COMMENT=${COMMENT//"\""/"\\\""}
 
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-
 . ex/util/require VCS_PAT PR_NUMBER COMMENT
 
 BODY="$(echo "{}" | jq -Mc ".body=\"$COMMENT\"")"
+
+. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
 
 CODE=0
 CODE=$(curl -w %{http_code} -o /dev/null -X POST \

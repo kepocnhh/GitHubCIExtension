@@ -10,20 +10,20 @@ ASSETS="$1"
 
 SELECT_FILLED_ARRAY="select((type==\"array\")and(.!=[]))"
 
-RELEASE_UPLOAD_URL=$(ex/util/jqx -sfs assemble/github/release.json .upload_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write RELEASE_UPLOAD_URL -sfs assemble/github/release.json .upload_url
 RELEASE_UPLOAD_URL="${RELEASE_UPLOAD_URL//\{?name,label\}/}"
 
 SIZE=$(echo "$ASSETS" | jq -Mcer "$SELECT_FILLED_ARRAY|length") || exit 1 # todo
-for ((i = 0; i < SIZE; i++)); do
- ASSET="$(echo "$ASSETS" | jq -Mc ".[$i]")"
+for ((ASSET_INDEX = 0; ASSET_INDEX<SIZE; ASSET_INDEX++)); do
+ ASSET="$(echo "$ASSETS" | jq -Mc ".[$ASSET_INDEX]")"
  ASSET_NAME=$(ex/util/jqj -sfs "$ASSET" .name) \
   || . ex/util/throw $? "$(cat /tmp/jqj.o)"
- echo "Upload asset [$i/$SIZE] ${ASSET_NAME}..."
+ echo "Upload asset [$ASSET_INDEX/$SIZE] ${ASSET_NAME}..."
  ASSET_LABEL=$(ex/util/jqj -sfs "$ASSET" .label) \
   || . ex/util/throw $? "$(cat /tmp/jqj.o)"
  ASSET_PATH=$(ex/util/jqj -sfs "$ASSET" .path) \
   || . ex/util/throw $? "$(cat /tmp/jqj.o)"
+ CODE=0
  CODE=$(curl -s -w %{http_code} -o /tmp/asset -X POST \
   "${RELEASE_UPLOAD_URL}?name=${ASSET_NAME}&label=$ASSET_LABEL" \
   -H "Authorization: token $VCS_PAT" \
