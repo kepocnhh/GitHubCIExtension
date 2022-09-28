@@ -8,10 +8,11 @@ echo "Workflow pull request snapshot on success start..."
 
 . ex/util/jq/write REPOSITORY_PAGES_HTML_URL -sfs assemble/vcs/repository/pages.json .html_url
 
+. ex/util/jq/write CI_BUILD_ID -si assemble/vcs/actions/run.json .id
 . ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 . ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
-RELEASE_NOTE_URL="${REPOSITORY_PAGES_HTML_URL}build/$CI_BUILD_NUMBER/release/note/index.html"
+RELEASE_NOTE_URL="${REPOSITORY_PAGES_HTML_URL}build/$CI_BUILD_NUMBER/$CI_BUILD_ID/release/note/index.html"
 
 REPORT=" - tag [$TAG]($REPOSITORY_HTML_URL/releases/tag/$TAG)
  - release [note]($RELEASE_NOTE_URL)"

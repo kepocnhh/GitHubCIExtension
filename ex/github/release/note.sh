@@ -22,6 +22,7 @@ git -C $REPOSITORY init \
  && git -C $REPOSITORY checkout gh-pages \
  || . ex/util/throw 21 "Git checkout error!"
 
+. ex/util/jq/write CI_BUILD_ID -si assemble/vcs/actions/run.json .id
 . ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 
 . ex/util/assert -f assemble/github/release_note.md
@@ -42,7 +43,7 @@ if test $CODE -ne 200; then
  exit 31
 fi
 
-RELATIVE_PATH=$CI_BUILD_NUMBER/release/note
+RELATIVE_PATH=$CI_BUILD_NUMBER/$CI_BUILD_ID/release/note
 mkdir -p $REPOSITORY/build/$RELATIVE_PATH \
  && cp assemble/github/release_note.html $REPOSITORY/build/$RELATIVE_PATH/index.html \
  || . ex/util/throw 22 "Illegal state!"
@@ -55,7 +56,7 @@ git -C $REPOSITORY config user.name "$WORKER_NAME" \
 
 git -C $REPOSITORY add --all . \
  && git -C $REPOSITORY commit -m "$COMMIT_MESSAGE" \
- && git -C $REPOSITORY tag "release/note/$CI_BUILD_NUMBER" \
+ && git -C $REPOSITORY tag "release/note/$CI_BUILD_NUMBER/$CI_BUILD_ID" \
  || . ex/util/throw 42 "Git commit error!"
 
 git -C $REPOSITORY push \

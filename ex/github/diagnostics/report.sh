@@ -20,9 +20,10 @@ git -C $REPOSITORY init \
  && git -C $REPOSITORY checkout gh-pages \
  || . ex/util/throw 11 "Git checkout error!"
 
+. ex/util/jq/write CI_BUILD_ID -si assemble/vcs/actions/run.json .id
 . ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 
-RELATIVE_PATH=$CI_BUILD_NUMBER/diagnostics/report
+RELATIVE_PATH=$CI_BUILD_NUMBER/$CI_BUILD_ID/diagnostics/report
 mkdir -p $REPOSITORY/build/$RELATIVE_PATH \
  && cp -r diagnostics/report/* $REPOSITORY/build/$RELATIVE_PATH || exit 1 # todo
 
@@ -40,7 +41,7 @@ git -C $REPOSITORY config user.name "$WORKER_NAME" \
 
 git -C $REPOSITORY add --all . \
  && git -C $REPOSITORY commit -m "$COMMIT_MESSAGE" \
- && git -C $REPOSITORY tag "diagnostics/report/$CI_BUILD_NUMBER" \
+ && git -C $REPOSITORY tag "diagnostics/report/$CI_BUILD_NUMBER/$CI_BUILD_ID" \
  || . ex/util/throw 42 "Git commit error!"
 
 git -C $REPOSITORY push \

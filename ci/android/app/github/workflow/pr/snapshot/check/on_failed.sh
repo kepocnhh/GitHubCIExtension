@@ -13,12 +13,13 @@ if test $SIZE == 0; then
  echo "Diagnostics should have determined the cause of the failure!"; exit 12
 fi
 
+. ex/util/jq/write CI_BUILD_ID -si assemble/vcs/actions/run.json .id
 . ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 . ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
 . ex/util/jq/write REPOSITORY_PAGES_HTML_URL -sfs assemble/vcs/repository/pages.json .html_url
 
-REPORT_PATH=$CI_BUILD_NUMBER/diagnostics/report
+REPORT_PATH=$CI_BUILD_NUMBER/$CI_BUILD_ID/diagnostics/report
 for ((TYPE_INDEX=0; TYPE_INDEX<SIZE; TYPE_INDEX++)); do
  TYPE="${TYPES[TYPE_INDEX]}"
  . ex/util/jq/write RELATIVE -sfs $ENVIRONMENT ".${TYPE}.path"

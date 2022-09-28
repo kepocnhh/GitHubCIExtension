@@ -19,34 +19,26 @@ if test $SIZE == 0; then
  echo "Diagnostics should have determined the cause of the failure!"; exit 11
 fi
 
-REPOSITORY_PAGES_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository/pages.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_PAGES_HTML_URL -sfs assemble/vcs/repository/pages.json .html_url
 
-CI_BUILD_NUMBER=$(ex/util/jqx -si assemble/vcs/actions/run.json .run_number) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-CI_BUILD_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write CI_BUILD_ID -si assemble/vcs/actions/run.json .id
+. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
+. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
-REPORT_PATH=$CI_BUILD_NUMBER/diagnostics/report
-for ((i=0; i<SIZE; i++)); do
- TYPE="${TYPES[i]}"
- RELATIVE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.path") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
- TITLE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.title") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+REPORT_PATH=$CI_BUILD_NUMBER/$CI_BUILD_ID/diagnostics/report
+for ((TYPE_INDEX=0; TYPE_INDEX<SIZE; TYPE_INDEX++)); do
+ TYPE="${TYPES[TYPE_INDEX]}"
+ . ex/util/jq/write RELATIVE -sfs $ENVIRONMENT ".${TYPE}.path"
+ . ex/util/jq/write TITLE -sfs $ENVIRONMENT ".${TYPE}.title"
  VERIFY_RESULT="${VERIFY_RESULT}
-    $((i+1))) [$TITLE](${REPOSITORY_PAGES_HTML_URL}build/$REPORT_PATH/$RELATIVE/index.html)"
+    $((TYPE_INDEX+1))) [$TITLE](${REPOSITORY_PAGES_HTML_URL}build/$REPORT_PATH/$RELATIVE/index.html)"
 done
 
-REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
-REPOSITORY_OWNER_LOGIN=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .login) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_OWNER_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_OWNER_LOGIN -sfs assemble/vcs/repository/owner.json .login
+. ex/util/jq/write REPOSITORY_OWNER_HTML_URL -sfs assemble/vcs/repository/owner.json .html_url
 
 MESSAGE="CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL) failed!
 
