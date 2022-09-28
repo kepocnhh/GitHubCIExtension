@@ -16,8 +16,8 @@ LABEL_NAME_TARGET=$(ex/util/jqj -sfs "$LABEL_TARGET" .name) \
 ISSUE_LABELS="$(jq .labels assemble/github/issue${ISSUE_NUMBER}.json)"
 REGEX="^status/\\\\w[\\\\s\\\\w]+$"
 QUERY=".[]|select(.name|test(\"$REGEX\")).id"
-for it in $(echo "$ISSUE_LABELS" | jq "$QUERY"); do
- ISSUE_LABELS="$(echo "$ISSUE_LABELS" | jq ".|map(select(.id!=$it))")"
+for ISSUE_LABEL in $(echo "$ISSUE_LABELS" | jq "$QUERY"); do
+ ISSUE_LABELS="$(echo "$ISSUE_LABELS" | jq ".|map(select(.id!=$ISSUE_LABEL))")"
 done
 ISSUE_LABELS="$(echo "$ISSUE_LABELS" | jq ".+[$LABEL_TARGET]")"
 ISSUE="$(echo "{}" | jq ".labels=$ISSUE_LABELS")"

@@ -8,8 +8,7 @@ BODY="$1"
 
 RELEASE_NAME=$(ex/util/jqj -sfs "$BODY" .name) \
  || . ex/util/throw $? "$(cat /tmp/jqj.o)"
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
 
 CODE=0
 CODE=$(curl -s -w %{http_code} -o assemble/github/release.json -X POST \
@@ -22,9 +21,6 @@ if test $CODE -ne 201; then
  exit 31
 fi
 
-RELEASE_ID=$(ex/util/jqx -si assemble/github/release.json .id) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-RELEASE_HTML_URL=$(ex/util/jqx -sfs assemble/github/release.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write RELEASE_HTML_URL -sfs assemble/github/release.json .html_url
 
 echo "The release $RELEASE_HTML_URL is ready."
