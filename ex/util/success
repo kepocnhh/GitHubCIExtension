@@ -1,0 +1,11 @@
+#!/bin/bash
+
+. ex/util/args/require $# 1
+
+SUCCESS_MESSAGE="$1"
+
+. ex/util/require SUCCESS_MESSAGE
+
+echo "$SUCCESS_MESSAGE"
+
+exit 0

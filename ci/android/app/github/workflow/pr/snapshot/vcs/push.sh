@@ -3,7 +3,7 @@
 echo "Workflow pull request snapshot VCS push..."
 
 ex/github/pr/commit.sh || exit 11
-ex/workflow/pr/snapshot/assemble/project/artifact.sh || exit 21
+ci/workflow/pr/snapshot/assemble/project/artifact.sh || exit 21
 
 . ci/workflow/pr/snapshot/tag.sh
 
