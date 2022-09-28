@@ -4,17 +4,14 @@ echo "VCS diagnostics report..."
 
 . ex/util/require VCS_PAT
 
-WORKER_NAME=$(ex/util/jqx -sfs assemble/vcs/worker.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-WORKER_VCS_EMAIL=$(ex/util/jqx -sfs assemble/vcs/worker.json .vcs_email) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write WORKER_NAME -sfs assemble/vcs/worker.json .name
+. ex/util/jq/write WORKER_VCS_EMAIL -sfs assemble/vcs/worker.json .vcs_email
 
 REPOSITORY=pages/diagnostics/report
 mkdir -p $REPOSITORY || exit 1 # todo
 . ex/util/assert -d $REPOSITORY
 
-REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
 git -C $REPOSITORY init \
  && git -C $REPOSITORY remote add origin \
@@ -23,8 +20,7 @@ git -C $REPOSITORY init \
  && git -C $REPOSITORY checkout gh-pages \
  || . ex/util/throw 11 "Git checkout error!"
 
-CI_BUILD_NUMBER=$(ex/util/jqx -si assemble/vcs/actions/run.json .run_number) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 
 RELATIVE_PATH=$CI_BUILD_NUMBER/diagnostics/report
 mkdir -p $REPOSITORY/build/$RELATIVE_PATH \

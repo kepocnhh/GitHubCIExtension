@@ -9,8 +9,7 @@ GIT_COMMIT_HEAD="$2"
 
 . ex/util/require GIT_COMMIT_BASE GIT_COMMIT_HEAD
 
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
 
 FILE="assemble/github/commit_compare_${GIT_COMMIT_BASE::7}_${GIT_COMMIT_HEAD::7}.json"
 CODE=$(curl -w %{http_code} -o "$FILE" \
@@ -21,7 +20,6 @@ if test $CODE -ne 200; then
  exit 11
 fi
 
-COMPARE_HTML_URL=$(ex/util/jqx -sfs "$FILE" .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write COMPARE_HTML_URL -sfs "$FILE" .html_url
 
 echo "The compare $COMPARE_HTML_URL is ready."

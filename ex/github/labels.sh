@@ -2,14 +2,12 @@
 
 echo "GitHub labels..."
 
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
 
 CODE=$(curl -w %{http_code} -o assemble/github/labels.json \
  "$REPOSITORY_URL/labels")
 if test $CODE -ne 200; then
+ . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
  echo "GitHub  repository $REPOSITORY_NAME labels error!"
  echo "Request error with response code $CODE!"
  exit 11
