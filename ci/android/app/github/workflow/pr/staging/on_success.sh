@@ -12,6 +12,9 @@ echo "Workflow pull request staging on success start..."
 . ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
 . ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
+. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+
 RELEASE_NOTE_URL="${REPOSITORY_PAGES_HTML_URL}build/$CI_BUILD_NUMBER/$CI_BUILD_ID/release/note/index.html"
 
 REPORT=" - tag [$TAG]($REPOSITORY_HTML_URL/releases/tag/$TAG)
@@ -25,9 +28,6 @@ ex/github/pr/comment.sh "$MESSAGE" \
 
 . ex/util/jq/write REPOSITORY_OWNER_LOGIN -sfs assemble/vcs/repository/owner.json .login
 . ex/util/jq/write REPOSITORY_OWNER_HTML_URL -sfs assemble/vcs/repository/owner.json .html_url
-
-. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
-. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
 . ex/util/jq/write GIT_COMMIT_SHA -sfs assemble/vcs/commit.json .sha
 . ex/util/jq/write AUTHOR_NAME -sfs assemble/vcs/commit/author.json .name

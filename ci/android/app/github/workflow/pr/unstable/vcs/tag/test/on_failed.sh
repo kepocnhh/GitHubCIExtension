@@ -9,10 +9,8 @@ ex/github/pr/close.sh \
 
 . ex/util/require PR_NUMBER TAG
 
-CI_BUILD_NUMBER=$(ex/util/jqx -si assemble/vcs/actions/run.json .run_number) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-CI_BUILD_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
+. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
 MESSAGE="Closed by CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)
  - tag \`$TAG\` test  failed!"
@@ -20,32 +18,22 @@ MESSAGE="Closed by CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)
 ex/github/pr/comment.sh "$MESSAGE" \
  || . ex/util/throw 12 "Illegal state!"
 
-REPOSITORY_OWNER_LOGIN=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .login) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_OWNER_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository/owner.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_OWNER_LOGIN -sfs assemble/vcs/repository/owner.json .login
+. ex/util/jq/write REPOSITORY_OWNER_HTML_URL -sfs assemble/vcs/repository/owner.json .html_url
 
-REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
+. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
 
-GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_NAME_SRC=$(ex/util/jqx -sfs assemble/vcs/commit/author.src.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_HTML_URL_SRC=$(ex/util/jqx -sfs assemble/vcs/commit/author.src.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-GIT_COMMIT_DST=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .base.sha) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_NAME_DST=$(ex/util/jqx -sfs assemble/vcs/commit/author.dst.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_HTML_URL_DST=$(ex/util/jqx -sfs assemble/vcs/commit/author.dst.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-WORKER_NAME=$(ex/util/jqx -sfs assemble/vcs/worker.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-WORKER_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/worker.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write GIT_COMMIT_SRC -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha
+. ex/util/jq/write AUTHOR_NAME_SRC -sfs assemble/vcs/commit/author.src.json .name
+. ex/util/jq/write AUTHOR_HTML_URL_SRC -sfs assemble/vcs/commit/author.src.json .html_url
+
+. ex/util/jq/write GIT_COMMIT_DST -sfs assemble/vcs/pr${PR_NUMBER}.json .base.sha
+. ex/util/jq/write AUTHOR_NAME_DST -sfs assemble/vcs/commit/author.dst.json .name
+. ex/util/jq/write AUTHOR_HTML_URL_DST -sfs assemble/vcs/commit/author.dst.json .html_url
+
+. ex/util/jq/write WORKER_NAME -sfs assemble/vcs/worker.json .name
+. ex/util/jq/write WORKER_HTML_URL -sfs assemble/vcs/worker.json .html_url
 
 MESSAGE="CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL) failed!
 

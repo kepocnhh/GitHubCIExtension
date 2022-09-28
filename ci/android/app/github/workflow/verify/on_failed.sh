@@ -2,15 +2,6 @@
 
 echo "Workflow verify on failed start..."
 
-GIT_COMMIT_SHA=$(ex/util/jqx -sfs assemble/vcs/commit.json .sha) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-GIT_COMMIT_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/commit.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_NAME=$(ex/util/jqx -sfs assemble/vcs/commit/author.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/commit/author.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-
 VERIFY_RESULT=" - see the report:"
 ENVIRONMENT=diagnostics/summary.json
 TYPES=($(jq -Mcer "keys|.[]" $ENVIRONMENT))
@@ -40,11 +31,15 @@ done
 . ex/util/jq/write REPOSITORY_OWNER_LOGIN -sfs assemble/vcs/repository/owner.json .login
 . ex/util/jq/write REPOSITORY_OWNER_HTML_URL -sfs assemble/vcs/repository/owner.json .html_url
 
+. ex/util/jq/write GIT_COMMIT_SHA -sfs assemble/vcs/commit.json .sha
+. ex/util/jq/write AUTHOR_NAME -sfs assemble/vcs/commit/author.json .name
+. ex/util/jq/write AUTHOR_HTML_URL -sfs assemble/vcs/commit/author.json .html_url
+
 MESSAGE="CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL) failed!
 
 [$REPOSITORY_OWNER_LOGIN]($REPOSITORY_OWNER_HTML_URL) / [$REPOSITORY_NAME]($REPOSITORY_HTML_URL)
 
- - source [${GIT_COMMIT_SHA::7}]($GIT_COMMIT_HTML_URL) by [$AUTHOR_NAME]($AUTHOR_HTML_URL)
+ - source [${GIT_COMMIT_SHA::7}]($REPOSITORY_HTML_URL/commit/$GIT_COMMIT_SHA) by [$AUTHOR_NAME]($AUTHOR_HTML_URL)
 $VERIFY_RESULT"
 
 ex/notification/telegram/send_message.sh "$MESSAGE" \

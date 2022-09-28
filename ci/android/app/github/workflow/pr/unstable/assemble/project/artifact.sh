@@ -25,4 +25,4 @@ mkdir -p assemble/project/artifact
 mv $RELATIVE/$ARTIFACT assemble/project/artifact/$ARTIFACT \
  || . ex/util/throw 12 "Install \"$ARTIFACT\" error!"
 
-ex/android/app/project/sign/artifact.sh "$ARTIFACT_VERSION" || exit 13
+ex/android/app/project/sign/artifact.sh "$ARTIFACT_VERSION" || exit 13 # todo
