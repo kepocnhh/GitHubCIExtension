@@ -7,18 +7,14 @@ echo "Workflow pull request unstable VCS release..."
 
 . ex/util/require ARTIFACT_VERSION TAG
 
-REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
+. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
 
-CI_BUILD_NUMBER=$(ex/util/jqx -si assemble/vcs/actions/run.json .run_number) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-CI_BUILD_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
+. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
 
-GIT_COMMIT_SHA=$(ex/util/jqx -sfs assemble/vcs/commit.json .sha) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write GIT_COMMIT_SHA -sfs assemble/vcs/commit.json .sha
+
 BODY="{}"
 . ex/util/jqm BODY \
  ".name=\"$TAG\"" \
@@ -28,14 +24,12 @@ BODY="{}"
  ".draft=false" \
  ".prerelease=true"
 mkdir -p assemble/github
-ex/github/release.sh "$BODY" || exit 11
-
-ex/android/app/project/sign/artifact/verify.sh "$ARTIFACT_VERSION" || exit 21
+ex/github/release.sh "$BODY" \
+ || . ex/util/throw 21 "Illegal state!"
 
 ASSETS="[]"
 for it in \
- "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk" \
- "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk.sig"; do
+ "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk"; do
  ASSET="{}"
  . ex/util/jqm ASSET \
   ".name=\"$it\"" \
@@ -44,4 +38,5 @@ for it in \
  . ex/util/jqm ASSETS ".+=[$ASSET]"
 done
 
-ex/github/release/upload/asset.sh "$ASSETS" || exit 31
+ex/github/release/upload/asset.sh "$ASSETS" \
+ || . ex/util/throw 31 "Illegal state!"

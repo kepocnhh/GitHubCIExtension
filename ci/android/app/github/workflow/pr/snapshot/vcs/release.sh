@@ -24,9 +24,10 @@ BODY="{}"
  ".draft=false" \
  ".prerelease=true"
 mkdir -p assemble/github
-ex/github/release.sh "$BODY" || exit 11
+ex/github/release.sh "$BODY" \
+ || . ex/util/throw 21 "Illegal state!"
 
-ex/android/app/project/sign/artifact/verify.sh "$ARTIFACT_VERSION" || exit 21
+ex/android/app/project/sign/artifact/verify.sh "$ARTIFACT_VERSION" || exit 22
 
 ASSETS="[]"
 for it in \
@@ -40,4 +41,5 @@ for it in \
  . ex/util/jqm ASSETS ".+=[$ASSET]"
 done
 
-ex/github/release/upload/asset.sh "$ASSETS" || exit 31
+ex/github/release/upload/asset.sh "$ASSETS" \
+ || . ex/util/throw 31 "Illegal state!"
