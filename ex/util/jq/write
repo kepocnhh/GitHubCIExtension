@@ -1,41 +1,39 @@
 #!/bin/bash
 
-OUTPUT=/tmp/jqw.o
-
-. ex/util/args/require $# 4 > $OUTPUT
+. ex/util/args/require $# 4
 
 JQ_VARIABLE="$1"
 JQ_OPTION="$2"
 JSON_FILE="$3"
 JSON_QUERY="$4"
 
-. ex/util/require JQ_VARIABLE JQ_OPTION JSON_FILE JSON_QUERY > $OUTPUT
-. ex/util/assert -f $JSON_FILE > $OUTPUT
+. ex/util/require JQ_VARIABLE JQ_OPTION JSON_FILE JSON_QUERY
+. ex/util/assert -f $JSON_FILE
 
 JQ_CODE=0
 
 case "$JQ_OPTION" in
  -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;
  -sb) JSON_OPTION="select((.!=null)and(type==\"boolean\"))"
-  JQ_RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; JQ_CODE=$?
+  JQ_RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE)"; JQ_CODE=$?
   if test $JQ_CODE -eq 0; then
    if test "$JQ_RESULT" == "true"; then
     echo "$JQ_RESULT"; exit 0
    fi
-   . ex/util/throw 121 "Unexpected boolean value \"$JQ_RESULT\"!" > $OUTPUT
+   . ex/util/throw 121 "Unexpected boolean value \"$JQ_RESULT\"!"
   elif test $JQ_CODE -eq 1; then
    if test "$JQ_RESULT" == "false"; then
     echo "$JQ_RESULT"; exit 0
    fi
-   . ex/util/throw 122 "Unexpected boolean value \"$JQ_RESULT\"!" > $OUTPUT
+   . ex/util/throw 122 "Unexpected boolean value \"$JQ_RESULT\"!"
   fi
   echo "Json parse boolean error!"; exit 123;;
  -si) JSON_OPTION="select((.!=null)and(type==\"number\"))";;
- *) . ex/util/throw 13 "JQ | Option \"$JQ_OPTION\" is not supported!" > $OUTPUT;;
+ *) . ex/util/throw 13 "JQ | Option \"$JQ_OPTION\" is not supported!";;
 esac
 
-JQ_RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE 2> $OUTPUT)"; JQ_CODE=$?
+JQ_RESULT="$(jq -Mcer "${JSON_QUERY}|${JSON_OPTION}" $JSON_FILE)"; JQ_CODE=$?
 [ $JQ_CODE -ne 0 ] \
- && . ex/util/throw 14 "Json parse $JSON_FILE by option \"$JQ_OPTION\" error!" > $OUTPUT
+ && . ex/util/throw 14 "Json parse $JSON_FILE by option \"$JQ_OPTION\" error!"
 
 printf -v "$JQ_VARIABLE" '%s' "$JQ_RESULT"

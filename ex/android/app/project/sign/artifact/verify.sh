@@ -8,8 +8,7 @@ ARTIFACT_VERSION="$1"
 
 . ex/util/require ARTIFACT_VERSION KEY_ALIAS KEYSTORE_PASSWORD
 
-REPOSITORY_NAME=$(ex/util/jqx -sfs assemble/vcs/repository.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 
 ARTIFACT="${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk"
 
