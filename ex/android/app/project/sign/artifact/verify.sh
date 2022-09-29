@@ -4,13 +4,13 @@ echo "Project sign artifact verify..."
 
 . ex/util/args/require $# 1
 
-ARTIFACT_VERSION="$1"
+TAG="$1"
 
-. ex/util/require ARTIFACT_VERSION KEY_ALIAS KEYSTORE_PASSWORD
+. ex/util/require TAG KEY_ALIAS KEYSTORE_PASSWORD
 
 . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 
-ARTIFACT="${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk"
+ARTIFACT="${REPOSITORY_NAME}-${TAG}.apk"
 
 ARTIFACT_PATH=assemble/project/artifact/$ARTIFACT
 KEYSTORE_PATH=assemble/project/${KEY_ALIAS}.pkcs12

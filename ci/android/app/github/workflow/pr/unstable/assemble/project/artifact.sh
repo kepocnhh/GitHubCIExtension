@@ -5,16 +5,16 @@ echo "Workflow pull request unstable assemble project artifact..."
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
 
-. ex/android/app/project/version.sh
+. ci/workflow/pr/unstable/tag.sh
 
-. ex/util/require ARTIFACT_VERSION BUILD_VARIANT
+. ex/util/require TAG BUILD_VARIANT
 
 . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 
-ARTIFACT="${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk"
+ARTIFACT="${REPOSITORY_NAME}-${TAG}.apk"
 
 echo "Assemble \"$ARTIFACT\"..."
-gradle -q -p "$REPOSITORY" app:assemble${BUILD_VARIANT^} \
+gradle -q -p "$REPOSITORY" app:assemble${BUILD_VARIANT^}Apk \
  || . ex/util/throw 11 "Assemble \"$ARTIFACT\" error!"
 
 RELATIVE="$REPOSITORY/app/build/outputs/apk/${BUILD_VARIANT}"

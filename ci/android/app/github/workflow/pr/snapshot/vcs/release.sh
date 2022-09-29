@@ -3,9 +3,8 @@
 echo "Workflow pull request snapshot VCS release..."
 
 . ci/workflow/pr/snapshot/tag.sh
-. ex/android/app/project/version.sh
 
-. ex/util/require ARTIFACT_VERSION TAG
+. ex/util/require TAG
 
 . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 . ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
@@ -27,12 +26,12 @@ mkdir -p assemble/github
 ex/github/release.sh "$BODY" \
  || . ex/util/throw 21 "Illegal state!"
 
-ex/android/app/project/sign/artifact/verify.sh "$ARTIFACT_VERSION" || exit 22
+ex/android/app/project/sign/artifact/verify.sh "$TAG" || exit 22
 
 ASSETS="[]"
 for it in \
- "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk" \
- "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk.sig"; do
+ "${REPOSITORY_NAME}-${TAG}.apk" \
+ "${REPOSITORY_NAME}-${TAG}.apk.sig"; do
  ASSET="{}"
  . ex/util/jqm ASSET \
   ".name=\"$it\"" \

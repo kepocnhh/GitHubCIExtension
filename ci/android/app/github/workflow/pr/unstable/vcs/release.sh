@@ -3,9 +3,8 @@
 echo "Workflow pull request unstable VCS release..."
 
 . ci/workflow/pr/unstable/tag.sh
-. ex/android/app/project/version.sh
 
-. ex/util/require ARTIFACT_VERSION TAG
+. ex/util/require TAG
 
 . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 . ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
@@ -29,7 +28,7 @@ ex/github/release.sh "$BODY" \
 
 ASSETS="[]"
 for it in \
- "${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk"; do
+ "${REPOSITORY_NAME}-${TAG}.apk"; do
  ASSET="{}"
  . ex/util/jqm ASSET \
   ".name=\"$it\"" \

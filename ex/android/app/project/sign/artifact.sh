@@ -4,13 +4,13 @@ echo "Project sign artifact..."
 
 . ex/util/args/require $# 1
 
-ARTIFACT_VERSION="$1"
+TAG="$1"
 
-. ex/util/require ARTIFACT_VERSION KEY_ALIAS
+. ex/util/require TAG KEY_ALIAS
 
 . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 
-ARTIFACT="${REPOSITORY_NAME}-${ARTIFACT_VERSION}.apk"
+ARTIFACT="${REPOSITORY_NAME}-${TAG}.apk"
 
 . ex/util/assert -f \
  assemble/project/artifact/$ARTIFACT \
