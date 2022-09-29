@@ -7,7 +7,7 @@ echo "Project prepare..."
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
 
-RESOURCES=$REPOSITORY/app/src/$BUILD_VARIANT/resources
+RESOURCES=$REPOSITORY/app/src/$KEY_ALIAS/resources
 cp assemble/project/${KEY_ALIAS}.pkcs12 $RESOURCES/key.pkcs12 \
  || . ex/util/throw 11 "Install keystore error!"
 
