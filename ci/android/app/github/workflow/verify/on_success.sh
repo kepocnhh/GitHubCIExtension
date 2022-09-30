@@ -2,18 +2,24 @@
 
 echo "Workflow verify on success start..."
 
-. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
-. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -si .run_number CI_BUILD_NUMBER \
+ -sfs .html_url CI_BUILD_HTML_URL
 
-. ex/util/jq/write REPOSITORY_OWNER_LOGIN -sfs assemble/vcs/repository/owner.json .login
-. ex/util/jq/write REPOSITORY_OWNER_HTML_URL -sfs assemble/vcs/repository/owner.json .html_url
+. ex/util/json -f assemble/vcs/repository/owner.json \
+ -sfs .login REPOSITORY_OWNER_LOGIN \
+ -sfs .html_url REPOSITORY_OWNER_HTML_URL
 
-. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
-. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .name REPOSITORY_NAME \
+ -sfs .html_url REPOSITORY_HTML_URL
 
-. ex/util/jq/write GIT_COMMIT_SHA -sfs assemble/vcs/commit.json .sha
-. ex/util/jq/write AUTHOR_NAME -sfs assemble/vcs/commit/author.json .name
-. ex/util/jq/write AUTHOR_HTML_URL -sfs assemble/vcs/commit/author.json .html_url
+. ex/util/json -f assemble/vcs/commit.json \
+ -sfs .sha GIT_COMMIT_SHA
+
+. ex/util/json -f assemble/vcs/commit/author.json \
+ -sfs .name AUTHOR_NAME \
+ -sfs .html_url AUTHOR_HTML_URL
 
 EMOJI_THUMBSUP='%F0%9F%91%8D'
 
