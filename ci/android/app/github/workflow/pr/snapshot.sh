@@ -4,10 +4,10 @@ echo "Workflow pull request snapshot start..."
 
 WORKFLOW=ci/workflow/pr/snapshot
 
-ex/util/run/pipeline \
+. ex/util/run/pipeline \
  $WORKFLOW/assemble/vcs.sh \
  ci/workflow/pr/merge.sh \
- $WORKFLOW/assemble/project/prepare.sh || exit 21
+ $WORKFLOW/assemble/project/prepare.sh
 
 ex/util/run/pipeline \
  $WORKFLOW/vcs/tag/test.sh \
