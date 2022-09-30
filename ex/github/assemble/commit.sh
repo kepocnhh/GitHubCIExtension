@@ -16,10 +16,9 @@ if test $CODE -ne 200; then
  exit 21
 fi
 
-COMMIT_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/commit.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-AUTHOR_LOGIN=$(ex/util/jqx -sfs assemble/vcs/commit.json .author.login) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/commit.json \
+ -sfs .html_url COMMIT_HTML_URL \
+ -sfs .author.login AUTHOR_LOGIN
 
 echo "The commit $COMMIT_HTML_URL is ready."
 
@@ -33,7 +32,7 @@ if test $CODE -ne 200; then
  exit 22
 fi
 
-AUTHOR_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/commit/author.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/commit/author.json \
+ -sfs .html_url AUTHOR_HTML_URL
 
 echo "The author $AUTHOR_HTML_URL is ready."

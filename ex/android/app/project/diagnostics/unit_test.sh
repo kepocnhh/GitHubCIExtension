@@ -10,20 +10,19 @@ REPOSITORY=repository
 ENVIRONMENT=repository/buildSrc/src/main/resources/json/verify/unit_test.json
 
 TYPE="UNIT_TEST"
-TASK=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.task") \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f $ENVIRONMENT \
+ -sfs ".${TYPE}.task" TASK \
+ -sfs ".${TYPE}.title" TITLE
+
 TASK=${TASK//"?"/"${BUILD_VARIANT^}"}
-TITLE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.title") \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
 echo "Task verify \"${TITLE}\"..."
 gradle -p $REPOSITORY -q "$TASK"; CODE=$?
 if test $CODE -ne 0; then
- RELATIVE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.path") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+ . ex/util/json -f $ENVIRONMENT \
+  -sfs ".${TYPE}.path" RELATIVE \
+  -sfs ".${TYPE}.report" REPORT
  RELATIVE=${RELATIVE//"?"/"$BUILD_VARIANT"}
  mkdir -p diagnostics/report/$RELATIVE
- REPORT=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.report") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
  REPORT=${REPORT//"?"/"${BUILD_VARIANT^}"}
  . ex/util/assert -d $REPOSITORY/$REPORT
  cp -r $REPOSITORY/$REPORT/* diagnostics/report/$RELATIVE || exit 1 # todo
@@ -32,25 +31,23 @@ if test $CODE -ne 0; then
   || exit 121
 else
  TYPE="TEST_COVERAGE"
- TASK=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.task") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+ . ex/util/json -f $ENVIRONMENT \
+  -sfs ".${TYPE}.task" TASK \
+  -sfs ".${TYPE}.title" TITLE
  TASK=${TASK//"?"/"${BUILD_VARIANT^}"}
- TITLE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.title") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
  echo "Task \"${TITLE}\"..."
  gradle -p $REPOSITORY -q "$TASK" || exit 1 # todo
- TASK=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.verification.task") \
-  || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+ . ex/util/json -f $ENVIRONMENT \
+  -sfs ".${TYPE}.verification.task" TASK
  TASK=${TASK//"?"/"${BUILD_VARIANT^}"}
  echo "Task verify \"${TITLE}\"..."
  gradle -p $REPOSITORY -q "$TASK"; CODE=$?
  if test $CODE -ne 0; then
-  RELATIVE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.path") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+  . ex/util/json -f $ENVIRONMENT \
+   -sfs ".${TYPE}.path" RELATIVE \
+   -sfs ".${TYPE}.report" REPORT
   RELATIVE=${RELATIVE//"?"/"$BUILD_VARIANT"}
   mkdir -p diagnostics/report/$RELATIVE
-  REPORT=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.report") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
   REPORT=${REPORT//"?"/"${BUILD_VARIANT^}"}
   . ex/util/assert -d $REPOSITORY/$REPORT
   cp -r $REPOSITORY/$REPORT/* diagnostics/report/$RELATIVE || exit 1 # todo

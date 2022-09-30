@@ -2,20 +2,18 @@
 
 echo "GitHub pull request commit..."
 
-WORKER_NAME=$(ex/util/jqx -sfs assemble/vcs/worker.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-WORKER_VCS_EMAIL=$(ex/util/jqx -sfs assemble/vcs/worker.json .vcs_email) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/worker.json \
+ -sfs .name WORKER_NAME \
+ -sfs .vcs_email WORKER_VCS_EMAIL
 
 . ex/util/require PR_NUMBER
 
-GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json ".head.sha") \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-GIT_COMMIT_DST=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json ".base.sha") \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/pr${PR_NUMBER}.json \
+ -sfs .head.sha GIT_COMMIT_SRC \
+ -sfs .base.sha GIT_COMMIT_DST
 
-CI_BUILD_NUMBER=$(ex/util/jqx -si assemble/vcs/actions/run.json .run_number) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -si .run_number CI_BUILD_NUMBER
 
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY
