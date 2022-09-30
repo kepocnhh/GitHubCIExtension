@@ -18,22 +18,23 @@ for ((ASSET_INDEX = 0; ASSET_INDEX<SIZE; ASSET_INDEX++)); do
  ASSET="$(echo "$ASSETS" | jq -Mc ".[$ASSET_INDEX]")"
  ASSET_NAME=$(ex/util/jqj -sfs "$ASSET" .name) \
   || . ex/util/throw $? "$(cat /tmp/jqj.o)"
- echo "Upload asset [$ASSET_INDEX/$SIZE] ${ASSET_NAME}..."
+ echo "Upload asset [$((ASSET_INDEX + 1))/$SIZE] \"$ASSET_NAME\"..."
  ASSET_LABEL=$(ex/util/jqj -sfs "$ASSET" .label) \
   || . ex/util/throw $? "$(cat /tmp/jqj.o)"
  ASSET_PATH=$(ex/util/jqj -sfs "$ASSET" .path) \
   || . ex/util/throw $? "$(cat /tmp/jqj.o)"
  CODE=0
- CODE=$(curl -s -w %{http_code} -o /tmp/asset -X POST \
+ OUTPUT=/tmp/output
+ CODE=$(curl -s -w %{http_code} -o $OUTPUT -X POST \
   "${RELEASE_UPLOAD_URL}?name=${ASSET_NAME}&label=$ASSET_LABEL" \
   -H "Authorization: token $VCS_PAT" \
   -H "Content-Type: text/plain" \
   --data-binary "@$ASSET_PATH")
  if test $CODE -ne 201; then
-  echo "GitHub release upload asset $ASSET_NAME error!"
+  echo "GitHub release upload asset \"$ASSET_NAME\" error!"
   echo "Request error with response code $CODE!"
-  cat /tmp/asset
-  exit 31
+  cat $OUTPUT
+  exit 21
  fi
- rm /tmp/asset
+ rm $OUTPUT
 done

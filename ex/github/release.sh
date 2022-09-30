@@ -11,15 +11,20 @@ RELEASE_NAME=$(ex/util/jqj -sfs "$BODY" .name) \
 . ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
 
 CODE=0
-CODE=$(curl -s -w %{http_code} -o assemble/github/release.json -X POST \
+OUTPUT=/tmp/output
+CODE=$(curl -s -w %{http_code} -o $OUTPUT -X POST \
  "$REPOSITORY_URL/releases" \
  -H "Authorization: token $VCS_PAT" \
  -d "$BODY")
 if test $CODE -ne 201; then
- echo "GitHub release $RELEASE_NAME error!"
+ echo "GitHub release \"$RELEASE_NAME\" error!"
  echo "Request error with response code $CODE!"
- exit 31
+ cat $OUTPUT
+ exit 21
 fi
+
+mv $OUTPUT assemble/github/release.json \
+ || . ex/util/throw 31 "Illegal state!"
 
 . ex/util/jq/write RELEASE_HTML_URL -sfs assemble/github/release.json .html_url
 

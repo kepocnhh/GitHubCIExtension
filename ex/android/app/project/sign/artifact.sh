@@ -6,7 +6,7 @@ echo "Project sign artifact..."
 
 TAG="$1"
 
-. ex/util/require TAG KEY_ALIAS
+. ex/util/require TAG KEY_ALIAS KEYSTORE_PASSWORD
 
 . ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
 
