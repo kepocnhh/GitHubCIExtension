@@ -9,7 +9,8 @@ MESSAGE="$2"
 
 . ex/util/require ISSUE_NUMBER MESSAGE
 
-. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 MESSAGE=${MESSAGE//\"/\\\"}
 CODE=$(curl -w %{http_code} -o /tmp/comment.json -X POST \
@@ -22,6 +23,7 @@ if test $CODE -ne 201; then
  exit 31
 fi
 
-. ex/util/jq/write COMMENT_HTML_URL -sfs /tmp/comment.json .html_url
+. ex/util/json -f /tmp/comment.json \
+ -sfs .html_url COMMENT_HTML_URL
 
 echo "The comment $COMMENT_HTML_URL is ready."

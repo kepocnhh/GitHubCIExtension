@@ -10,19 +10,19 @@ ASSETS="$1"
 
 SELECT_FILLED_ARRAY="select((type==\"array\")and(.!=[]))"
 
-. ex/util/jq/write RELEASE_UPLOAD_URL -sfs assemble/github/release.json .upload_url
+. ex/util/json -f assemble/github/release.json \
+ -sfs .upload_url RELEASE_UPLOAD_URL
+
 RELEASE_UPLOAD_URL="${RELEASE_UPLOAD_URL//\{?name,label\}/}"
 
 SIZE=$(echo "$ASSETS" | jq -Mcer "$SELECT_FILLED_ARRAY|length") || exit 1 # todo
 for ((ASSET_INDEX = 0; ASSET_INDEX<SIZE; ASSET_INDEX++)); do
  ASSET="$(echo "$ASSETS" | jq -Mc ".[$ASSET_INDEX]")"
- ASSET_NAME=$(ex/util/jqj -sfs "$ASSET" .name) \
-  || . ex/util/throw $? "$(cat /tmp/jqj.o)"
+ . ex/util/json -j "$ASSET" \
+  -sfs .name ASSET_NAME \
+  -sfs .label ASSET_LABEL \
+  -sfs .path ASSET_PATH
  echo "Upload asset [$((ASSET_INDEX + 1))/$SIZE] \"$ASSET_NAME\"..."
- ASSET_LABEL=$(ex/util/jqj -sfs "$ASSET" .label) \
-  || . ex/util/throw $? "$(cat /tmp/jqj.o)"
- ASSET_PATH=$(ex/util/jqj -sfs "$ASSET" .path) \
-  || . ex/util/throw $? "$(cat /tmp/jqj.o)"
  CODE=0
  OUTPUT=/tmp/output
  CODE=$(curl -s -w %{http_code} -o $OUTPUT -X POST \

@@ -4,14 +4,13 @@ echo "Workflow pr merge start..."
 
 . ex/util/require PR_NUMBER
 
-WORKER_NAME=$(ex/util/jqx -sfs assemble/vcs/worker.json .name) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-WORKER_VCS_EMAIL=$(ex/util/jqx -sfs assemble/vcs/worker.json .vcs_email) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-GIT_BRANCH_DST=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .base.ref) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-GIT_COMMIT_SRC=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/worker.json \
+ -sfs .name WORKER_NAME \
+ -sfs .vcs_email WORKER_VCS_EMAIL
+
+. ex/util/json -f assemble/vcs/pr${PR_NUMBER}.json \
+ -sfs .base.ref GIT_BRANCH_DST \
+ -sfs .head.sha GIT_COMMIT_SRC
 
 REPOSITORY=repository
 . ex/util/assert -d $REPOSITORY

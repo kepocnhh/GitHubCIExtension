@@ -9,8 +9,9 @@ ex/github/pr/close.sh \
 
 . ex/util/require PR_NUMBER TAG
 
-. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
-. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -si .run_number CI_BUILD_NUMBER \
+ -sfs .html_url CI_BUILD_HTML_URL
 
 MESSAGE="Closed by CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)
  - tag \`$TAG\` test  failed!"
@@ -18,22 +19,31 @@ MESSAGE="Closed by CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)
 ex/github/pr/comment.sh "$MESSAGE" \
  || . ex/util/throw 12 "Illegal state!"
 
-. ex/util/jq/write REPOSITORY_OWNER_LOGIN -sfs assemble/vcs/repository/owner.json .login
-. ex/util/jq/write REPOSITORY_OWNER_HTML_URL -sfs assemble/vcs/repository/owner.json .html_url
+. ex/util/json -f assemble/vcs/repository/owner.json \
+ -sfs .login REPOSITORY_OWNER_LOGIN \
+ -sfs .html_url REPOSITORY_OWNER_HTML_URL
 
-. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
-. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .name REPOSITORY_NAME \
+ -sfs .html_url REPOSITORY_HTML_URL
 
-. ex/util/jq/write GIT_COMMIT_SRC -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha
-. ex/util/jq/write AUTHOR_NAME_SRC -sfs assemble/vcs/commit/author.src.json .name
-. ex/util/jq/write AUTHOR_HTML_URL_SRC -sfs assemble/vcs/commit/author.src.json .html_url
+. ex/util/require PR_NUMBER
 
-. ex/util/jq/write GIT_COMMIT_DST -sfs assemble/vcs/pr${PR_NUMBER}.json .base.sha
-. ex/util/jq/write AUTHOR_NAME_DST -sfs assemble/vcs/commit/author.dst.json .name
-. ex/util/jq/write AUTHOR_HTML_URL_DST -sfs assemble/vcs/commit/author.dst.json .html_url
+. ex/util/json -f assemble/vcs/pr${PR_NUMBER}.json \
+ -sfs .head.sha GIT_COMMIT_SRC \
+ -sfs .base.sha GIT_COMMIT_DST
 
-. ex/util/jq/write WORKER_NAME -sfs assemble/vcs/worker.json .name
-. ex/util/jq/write WORKER_HTML_URL -sfs assemble/vcs/worker.json .html_url
+. ex/util/json -f assemble/vcs/commit/author.src.json \
+ -sfs .name AUTHOR_NAME_SRC \
+ -sfs .html_url AUTHOR_HTML_URL_SRC
+
+. ex/util/json -f assemble/vcs/commit/author.dst.json \
+ -sfs .name AUTHOR_NAME_DST \
+ -sfs .html_url AUTHOR_HTML_URL_DST
+
+. ex/util/json -f assemble/vcs/worker.json \
+ -sfs .name WORKER_NAME \
+ -sfs .html_url WORKER_HTML_URL
 
 MESSAGE="CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL) failed!
 

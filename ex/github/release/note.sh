@@ -8,12 +8,16 @@ TAG="$1"
 
 . ex/util/require VCS_DOMAIN VCS_PAT TAG
 
-. ex/util/jq/write WORKER_NAME -sfs assemble/vcs/worker.json .name
-. ex/util/jq/write WORKER_VCS_EMAIL -sfs assemble/vcs/worker.json .vcs_email
-. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+. ex/util/json -f assemble/vcs/worker.json \
+ -sfs .name WORKER_NAME \
+ -sfs .vcs_email WORKER_VCS_EMAIL
+
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .html_url REPOSITORY_HTML_URL
 
 REPOSITORY=pages/release/note
-mkdir -p $REPOSITORY || . ex/util/throw 11 "Illegal state!"
+mkdir -p $REPOSITORY \
+ || . ex/util/throw 11 "Illegal state!"
 
 git -C $REPOSITORY init \
  && git -C $REPOSITORY remote add origin \
@@ -22,8 +26,9 @@ git -C $REPOSITORY init \
  && git -C $REPOSITORY checkout gh-pages \
  || . ex/util/throw 21 "Git checkout error!"
 
-. ex/util/jq/write CI_BUILD_ID -si assemble/vcs/actions/run.json .id
-. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -si .id CI_BUILD_ID \
+ -si .run_number CI_BUILD_NUMBER
 
 . ex/util/assert -f assemble/github/release_note.md
 

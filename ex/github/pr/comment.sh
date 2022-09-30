@@ -12,7 +12,8 @@ COMMENT=${COMMENT//"\""/"\\\""}
 
 BODY="$(echo "{}" | jq -Mc ".body=\"$COMMENT\"")"
 
-. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 CODE=0
 CODE=$(curl -w %{http_code} -o /dev/null -X POST \
