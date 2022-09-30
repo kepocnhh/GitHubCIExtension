@@ -15,9 +15,9 @@ echo "password=${KEYSTORE_PASSWORD//"\\"/"\\\\"}" > $RESOURCES/properties \
  || . ex/util/throw 12 "Install keystore password error!"
 
 echo "Clean..."
-gradle -q -p $REPOSITORY clean \
+gradle -p $REPOSITORY clean \
  || . ex/util/throw 21 "Gradle clean error!"
 
 echo "Compile..."
-gradle -q -p $REPOSITORY app:compile${BUILD_VARIANT}Sources \
+gradle -p $REPOSITORY app:compile${BUILD_VARIANT}Sources \
  || . ex/util/throw 22 "Gradle compile \"${BUILD_VARIANT}\" error!"
