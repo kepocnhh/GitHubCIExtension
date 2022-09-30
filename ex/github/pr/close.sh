@@ -5,8 +5,9 @@ echo "VCS pull request close..."
 . ex/util/require VCS_PAT PR_NUMBER
 
 BODY="$(echo "{}" | jq -Mc ".state=\"close\"")"
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 CODE=0
 CODE=$(curl -w %{http_code} -o /dev/null -X PATCH \

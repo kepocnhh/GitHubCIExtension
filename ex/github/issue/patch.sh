@@ -9,7 +9,8 @@ BODY="$2"
 
 . ex/util/require ISSUE_NUMBER BODY
 
-. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 CODE=$(curl -w %{http_code} -o assemble/github/issue${ISSUE_NUMBER}.json -X PATCH \
  "$REPOSITORY_URL/issues/$ISSUE_NUMBER" \
@@ -22,6 +23,7 @@ if test $CODE -ne 200; then
  exit 31
 fi
 
-. ex/util/jq/write ISSUE_HTML_URL -sfs assemble/github/issue${ISSUE_NUMBER}.json .html_url
+. ex/util/json -f assemble/github/issue${ISSUE_NUMBER}.json \
+ -sfs .html_url ISSUE_HTML_URL
 
 echo "The issue $ISSUE_HTML_URL is patched."

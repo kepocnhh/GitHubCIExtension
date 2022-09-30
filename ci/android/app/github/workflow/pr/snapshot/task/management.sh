@@ -6,8 +6,9 @@ mkdir -p assemble/github
 
 . ex/util/require PR_NUMBER LABEL_ID_SNAPSHOT
 
-. ex/util/jq/write GIT_COMMIT_DST -sfs assemble/vcs/pr${PR_NUMBER}.json .base.sha
-. ex/util/jq/write GIT_COMMIT_SRC -sfs assemble/vcs/pr${PR_NUMBER}.json .head.sha
+. ex/util/json -f assemble/vcs/pr${PR_NUMBER}.json \
+ -sfs .head.sha GIT_COMMIT_SRC \
+ -sfs .base.sha GIT_COMMIT_DST
 
 ex/github/commit/compare.sh "$GIT_COMMIT_DST" "$GIT_COMMIT_SRC" \
  || . ex/util/throw 11 "Illegal state!"
@@ -19,7 +20,8 @@ SIZE=$(jq -e ".commits|length" "$FILE") \
 REGEX="(^|\s)fix iss/\K[^\W|$]+"
 ISSUES=()
 for ((COMMIT_INDEX=0; COMMIT_INDEX<SIZE; COMMIT_INDEX++)); do
- . ex/util/jq/write COMMIT_MESSAGE -sfs "$FILE" ".commits[$COMMIT_INDEX].commit.message"
+ . ex/util/json -f "$FILE" \
+  -sfs ".commits[$COMMIT_INDEX].commit.message" COMMIT_MESSAGE
  ISSUES+=($(echo "$COMMIT_MESSAGE" | grep -Po "$REGEX" | grep -Po "\d+"))
 done
 
@@ -35,10 +37,12 @@ LABEL_ID_TARGET="$LABEL_ID_SNAPSHOT"
 LABEL_TARGET="$(jq ".[]|select(.id==$LABEL_ID_TARGET)" assemble/github/labels.json)"
 LABEL_NAME_TARGET="$(echo "$LABEL_TARGET" | jq -r .name)"
 
-. ex/util/jq/write REPOSITORY_HTML_URL -sfs assemble/vcs/repository.json .html_url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .html_url REPOSITORY_HTML_URL
 
-. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
-. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -si .run_number CI_BUILD_NUMBER \
+ -sfs .html_url CI_BUILD_HTML_URL
 
 TAG_URL="$REPOSITORY_HTML_URL/releases/tag/$TAG"
 MESSAGE="Marked as \`$LABEL_NAME_TARGET\` in [$TAG]($TAG_URL) by CI build [#$CI_BUILD_NUMBER]($CI_BUILD_HTML_URL)."
