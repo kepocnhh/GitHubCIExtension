@@ -2,8 +2,8 @@
 
 echo "Assemble github pull request..."
 
-REPOSITORY_URL=$(ex/util/jqx -sfs assemble/vcs/repository.json .url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 . ex/util/require PR_NUMBER
 
@@ -16,7 +16,7 @@ if test $CODE -ne 200; then
  exit 21
 fi
 
-PR_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/pr${PR_NUMBER}.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/pr${PR_NUMBER}.json \
+ -sfs .html_url PR_HTML_URL
 
 echo "The pull request $PR_HTML_URL is ready."
