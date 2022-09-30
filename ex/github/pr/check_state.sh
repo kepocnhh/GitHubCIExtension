@@ -8,7 +8,8 @@ EXPECTED_STATE="$1"
 
 . ex/util/require PR_NUMBER EXPECTED_STATE
 
-. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 CODE=0
 CODE=$(curl -w %{http_code} -o assemble/vcs/pr${PR_NUMBER}.json \
@@ -19,6 +20,7 @@ if test $CODE -ne 200; then
  exit 21
 fi
 
-. ex/util/jq/write ACTUAL_STATE -sfs assemble/vcs/pr${PR_NUMBER}.json .state
+. ex/util/json -f assemble/vcs/pr${PR_NUMBER}.json \
+ -sfs .state ACTUAL_STATE
 
 . ex/util/assert -eq EXPECTED_STATE ACTUAL_STATE
