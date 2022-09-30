@@ -6,13 +6,16 @@ echo "Workflow pull request snapshot VCS release..."
 
 . ex/util/require TAG
 
-. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
-. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .name REPOSITORY_NAME \
+ -sfs .url REPOSITORY_URL
 
-. ex/util/jq/write CI_BUILD_NUMBER -si assemble/vcs/actions/run.json .run_number
-. ex/util/jq/write CI_BUILD_HTML_URL -sfs assemble/vcs/actions/run.json .html_url
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -si .run_number CI_BUILD_NUMBER \
+ -sfs .html_url CI_BUILD_HTML_URL
 
-. ex/util/jq/write GIT_COMMIT_SHA -sfs assemble/vcs/commit.json .sha
+. ex/util/json -f assemble/vcs/commit.json \
+ -sfs .sha GIT_COMMIT_SHA
 
 BODY="{}"
 . ex/util/jq/merge BODY \
