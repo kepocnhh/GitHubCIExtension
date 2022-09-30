@@ -29,8 +29,9 @@ elif test "$IS_TESTED" != "false"; then
  . ex/util/throw 22 "The issue #$ISSUE_NUMBER label \"$LABEL_NAME\" error!"
 fi
 
-ISSUE_STATE=$(ex/util/jqx -sfs assemble/github/issue${ISSUE_NUMBER}.json .state) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/github/issue${ISSUE_NUMBER}.json \
+ -sfs .state ISSUE_STATE
+
 if test "$ISSUE_STATE" == "closed"; then
  . ex/util/success "The issue #$ISSUE_NUMBER is closed."
 elif test "$ISSUE_STATE" != "open"; then
