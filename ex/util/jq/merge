@@ -1,20 +1,18 @@
 #!/bin/bash
 
-OUTPUT=/tmp/jqm.o
-
-[ $# -lt 2 ] && . ex/util/throw 11 "Script needs more arguments!" > $OUTPUT
+[ $# -lt 2 ] && . ex/util/throw 11 "Script needs more arguments!"
 
 JQ_VARIABLE="$1"
 
-. ex/util/require JQ_VARIABLE > $OUTPUT
+. ex/util/require JQ_VARIABLE
 
 JQ_CODE=0
 for ((JSON_QUERY_INDEX=2; JSON_QUERY_INDEX<=$#; JSON_QUERY_INDEX++)); do
  JSON_QUERY="${!JSON_QUERY_INDEX}"
- . ex/util/require JSON_QUERY > $OUTPUT
+ . ex/util/require JSON_QUERY
  JQ_RESULT="$(echo "${!JQ_VARIABLE}" | jq -Mc "$JSON_QUERY")"; JQ_CODE=$?
  [ $JQ_CODE -ne 0 ] \
   && . ex/util/throw $((100 + $JSON_QUERY_INDEX)) \
-   "Json merge [$(($JSON_QUERY_INDEX - 1))/$(($# - 1))] \"$JQ_VARIABLE\" error!" > $OUTPUT
+   "Json merge [$(($JSON_QUERY_INDEX - 1))/$(($# - 1))] \"$JQ_VARIABLE\" error!"
  printf -v "$JQ_VARIABLE" '%s' "$JQ_RESULT"
 done

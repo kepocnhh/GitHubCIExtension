@@ -15,7 +15,7 @@ echo "Workflow pull request snapshot VCS release..."
 . ex/util/jq/write GIT_COMMIT_SHA -sfs assemble/vcs/commit.json .sha
 
 BODY="{}"
-. ex/util/jqm BODY \
+. ex/util/jq/merge BODY \
  ".name=\"$TAG\"" \
  ".tag_name=\"$TAG\"" \
  ".target_commitish=\"$GIT_COMMIT_SHA\"" \
@@ -33,11 +33,11 @@ for it in \
  "${REPOSITORY_NAME}-${TAG}.apk" \
  "${REPOSITORY_NAME}-${TAG}.apk.sig"; do
  ASSET="{}"
- . ex/util/jqm ASSET \
+ . ex/util/jq/merge ASSET \
   ".name=\"$it\"" \
   ".label=\"$it\"" \
   ".path=\"assemble/project/artifact/$it\""
- . ex/util/jqm ASSETS ".+=[$ASSET]"
+ . ex/util/jq/merge ASSETS ".+=[$ASSET]"
 done
 
 ex/github/release/upload/asset.sh "$ASSETS" \

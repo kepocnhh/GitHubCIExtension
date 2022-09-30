@@ -30,7 +30,7 @@ git -C $REPOSITORY init \
 TEXT="$(cat assemble/github/release_note.md)"
 TEXT="${TEXT//$'\n'/\\n}"
 BODY="{}"
-. ex/util/jqm BODY \
+. ex/util/jq/merge BODY \
  ".text=\"$TEXT\"" \
  ".mode=\"markdown\""
 CODE=0
