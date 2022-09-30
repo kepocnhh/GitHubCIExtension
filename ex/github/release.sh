@@ -6,9 +6,11 @@ echo "GitHub release..."
 
 BODY="$1"
 
-RELEASE_NAME=$(ex/util/jqj -sfs "$BODY" .name) \
- || . ex/util/throw $? "$(cat /tmp/jqj.o)"
-. ex/util/jq/write REPOSITORY_URL -sfs assemble/vcs/repository.json .url
+. ex/util/json -j "$BODY" \
+ -sfs .name RELEASE_NAME
+
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .url REPOSITORY_URL
 
 CODE=0
 OUTPUT=/tmp/output
@@ -26,6 +28,7 @@ fi
 mv $OUTPUT assemble/github/release.json \
  || . ex/util/throw 31 "Illegal state!"
 
-. ex/util/jq/write RELEASE_HTML_URL -sfs assemble/github/release.json .html_url
+. ex/util/json -f assemble/github/release.json \
+ -sfs .html_url RELEASE_HTML_URL
 
 echo "The release $RELEASE_HTML_URL is ready."
