@@ -8,7 +8,8 @@ TAG="$1"
 
 . ex/util/require TAG KEY_ALIAS KEYSTORE_PASSWORD
 
-. ex/util/jq/write REPOSITORY_NAME -sfs assemble/vcs/repository.json .name
+. ex/util/json -f assemble/vcs/repository.json \
+ -sfs .name REPOSITORY_NAME
 
 ARTIFACT="${REPOSITORY_NAME}-${TAG}.apk"
 
