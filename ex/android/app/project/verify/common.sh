@@ -15,13 +15,11 @@ for (( ARG_NUMBER=1; ARG_NUMBER<=$#; ARG_NUMBER++ )); do
  SIZE=${#ARRAY[*]}
  for ((TYPE_NUMBER=0; TYPE_NUMBER<$SIZE; TYPE_NUMBER++)); do
   TYPE="${ARRAY[TYPE_NUMBER]}"
-  BY_VARIANT=$(ex/util/jqx -sb $ENVIRONMENT ".${TYPE}.byVariant") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
-  TASK=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.task") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+  . ex/util/json -f $ENVIRONMENT \
+   -sb ".${TYPE}.byVariant" BY_VARIANT \
+   -sfs ".${TYPE}.task" TASK \
+   -sfs ".${TYPE}.title" TITLE
   test "$BY_VARIANT" == "true" && TASK=${TASK//"?"/"${BUILD_VARIANT^}"}
-  TITLE=$(ex/util/jqx -sfs $ENVIRONMENT ".${TYPE}.title") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
   echo "Task [$((TYPE_NUMBER+1))/$SIZE] verify \"${TITLE}\"..."
   gradle -p $REPOSITORY -q "$TASK" \
    || . ex/util/throw $((100+TYPE_NUMBER)) "Gradle $TASK error!"

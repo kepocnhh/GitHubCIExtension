@@ -18,9 +18,8 @@ for (( ARG_NUMBER=1; ARG_NUMBER<=$#; ARG_NUMBER++ )); do
  SIZE=${#ARRAY[*]}
  for ((TYPE_NUMBER=0; TYPE_NUMBER<$SIZE; TYPE_NUMBER++)); do
   TYPE="${ARRAY[TYPE_NUMBER]}"
-  BY_VARIANT=$(ex/util/jqx -sb $ENVIRONMENT ".${TYPE}.byVariant") \
-   || . ex/util/throw $? "$(cat /tmp/jqx.o)"
   . ex/util/json -f $ENVIRONMENT \
+   -sb ".${TYPE}.byVariant" BY_VARIANT \
    -sfs ".${TYPE}.task" TASK \
    -sfs ".${TYPE}.title" TITLE
   test "$BY_VARIANT" == "true" && TASK=${TASK//"?"/"${BUILD_VARIANT^}"}
