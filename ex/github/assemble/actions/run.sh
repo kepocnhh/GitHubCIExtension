@@ -2,9 +2,10 @@
 
 echo "Assemble VCS actions run..."
 
-. ex/util/require REPOSITORY_OWNER REPOSITORY_NAME VCS_DOMAIN CI_BUILD_ID
+. ex/util/require VCS_DOMAIN REPOSITORY_OWNER REPOSITORY_NAME CI_BUILD_ID
 
-mkdir -p assemble/vcs/actions || exit 1 # todo
+mkdir -p assemble/vcs/actions \
+ || . ex/util/throw 11 "Illegal state!"
 
 CODE=0
 CODE=$(curl -s -w %{http_code} -o assemble/vcs/actions/run.json \
@@ -15,7 +16,7 @@ if test $CODE -ne 200; then
  exit 11
 fi
 
-RUN_HTML_URL=$(ex/util/jqx -sfs assemble/vcs/actions/run.json .html_url) \
- || . ex/util/throw $? "$(cat /tmp/jqx.o)"
+. ex/util/json -f assemble/vcs/actions/run.json \
+ -sfs .html_url RUN_HTML_URL
 
 echo "The actions run $RUN_HTML_URL is ready."

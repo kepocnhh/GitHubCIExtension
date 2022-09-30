@@ -1,0 +1,55 @@
+#!/bin/bash
+
+[ $# -lt 5 ] && . ex/util/throw 11 "Script needs more arguments, but actual is $#!"
+
+[ $(($(($# - 2)) % 3)) -ne 0 ] && . ex/util/throw 12 "Arguments error!"
+
+JSON_SOURCE_OPTION="$1"
+JSON_SOURCE="$2"
+
+VARIABLES=$(($(($# - 2)) / 3))
+for ((RELATIVE_INDEX=0; RELATIVE_INDEX<$VARIABLES; RELATIVE_INDEX++)); do
+ JSON_QUERY_INDEX=$((2 + $((RELATIVE_INDEX * 3)) + 1))
+ JSON_QUERY_OPTION="${!JSON_QUERY_INDEX}"
+ . ex/util/require JSON_QUERY_OPTION
+ case "$JSON_QUERY_OPTION" in
+  -sfs) JSON_OPTION="select((.!=null)and(type==\"string\")and(.!=\"\"))";;
+  -si) JSON_OPTION="select((.!=null)and(type==\"number\"))";;
+  -sb) JSON_OPTION="select((.!=null)and(type==\"boolean\"))";;
+  *) . ex/util/throw 21 "Query option \"$JSON_QUERY_OPTION\" is not supported!";;
+ esac
+ JSON_QUERY_INDEX=$((2 + $((RELATIVE_INDEX * 3)) + 2))
+ JSON_QUERY="${!JSON_QUERY_INDEX}"
+ . ex/util/require JSON_QUERY
+ JSON_QUERY_INDEX=$((2 + $((RELATIVE_INDEX * 3)) + 3))
+ JSON_VARIABLE="${!JSON_QUERY_INDEX}"
+ . ex/util/require JSON_VARIABLE
+ JSON_CODE=0
+ case "$JSON_SOURCE_OPTION" in
+  -j | --json)
+   JSON_RESULT="$(echo "$JSON_SOURCE" | jq -Mcer "${JSON_QUERY}|$JSON_OPTION")"
+   JSON_CODE=$?;;
+  -f | --file)
+   JSON_RESULT="$(jq -Mcer "${JSON_QUERY}|$JSON_OPTION" $JSON_SOURCE)"
+   JSON_CODE=$?;;
+  *) . ex/util/throw 22 "Source option \"$JSON_SOURCE_OPTION\" is not supported!";;
+ esac
+ if test "$JSON_QUERY_OPTION" == '-sb'; then
+  if test $JSON_CODE -eq 0; then
+   [ "$JSON_RESULT" != 'true' ] && . ex/util/throw 31 "Unexpected boolean value \"$JSON_RESULT\"!"
+  elif test $JSON_CODE -eq 1; then
+   [ "$JSON_RESULT" != 'false' ] && . ex/util/throw 32 "Unexpected boolean value \"$JSON_RESULT\"!"
+   JSON_CODE=0
+  fi
+ fi
+ if test $JSON_CODE -ne 0; then
+  echo "Query option: \"$JSON_QUERY_OPTION\""
+  echo "Variable: \"$JSON_VARIABLE\""
+  case "$JSON_SOURCE_OPTION" in
+   -j | --json) . ex/util/throw 41 "Parse json error!";;
+   -f | --file) . ex/util/throw 42 "Parse \"$JSON_SOURCE\" error!";;
+   *) . ex/util/throw 43 "Source option \"$JSON_SOURCE_OPTION\" is not supported!";;
+  esac
+ fi
+ printf -v "$JSON_VARIABLE" '%s' "$JSON_RESULT"
+done
